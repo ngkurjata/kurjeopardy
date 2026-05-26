@@ -204,19 +204,67 @@
   .empty{text-align:center;color:#8088c8;font-size:13px;padding:30px 20px;line-height:1.6;}
   .mini-bar{height:6px;border-radius:3px;background:var(--jeop-darker);overflow:hidden;margin-top:5px;}
   .mini-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-bright));}
+
+  /* mode toggle (Summary | Archive) */
+  .mode-seg{margin:0 4px 2px;background:transparent;border:none;padding:0;gap:0;
+    border-bottom:1px solid var(--line);border-radius:0;}
+  .mode-seg button{border-radius:0;background:none;padding:10px 4px;
+    border-bottom:2px solid transparent;font-size:12px;}
+  .mode-seg button.on{background:none;color:var(--gold-bright);
+    border-bottom:2px solid var(--gold);box-shadow:none;}
+
+  /* archive rows */
+  .arch-date{flex:1;min-width:0;font-family:'Oswald',sans-serif;font-weight:600;
+    font-size:13px;color:var(--ink);letter-spacing:.3px;}
+  .crown-sm{font-size:15px;flex-shrink:0;}
+  .chev{color:#5b63a8;font-size:13px;flex-shrink:0;width:16px;text-align:center;
+    transition:transform .2s;}
+  .chev.up{transform:rotate(180deg);color:var(--gold-bright);}
+  .arch-detail{background:var(--jeop-darker);border-radius:9px;margin:0 6px 8px;
+    padding:6px 4px;animation:fadein .2s both;}
+  .detail-row{display:flex;align-items:center;gap:8px;padding:6px 8px;
+    border-bottom:1px solid rgba(212,160,23,.1);}
+  .detail-row:last-child{border-bottom:none;}
+  .dr-rank{font-family:'Anton',sans-serif;font-size:13px;color:#5b63a8;
+    width:18px;text-align:center;flex-shrink:0;}
+  .dr-name{font-family:'Oswald',sans-serif;font-weight:600;font-size:13px;flex:1;}
+  .dr-sub{font-size:10px;color:#8088c8;}
+  .dr-idx{font-family:'Anton',sans-serif;font-size:15px;color:var(--gold-bright);
+    flex-shrink:0;min-width:30px;text-align:right;}
 </style>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
 <div id="root"></div>
 <script type="text/babel" data-presets="react">
-const APP_DATA = {"c":{"a":16.683501766617198,"b":0.9265518973537842},"g":[["2025-09-18",[["Jonny","DC",13]]],["2025-09-18",[["Naomi","PG",10],["Stevie","PG",8]]],["2025-09-18",[["Eberley","WK",8],["Nate","WK",9]]],["2025-09-19",[["Naomi","PG",9],["Stevie","PG",8]]],["2025-09-19",[["Eberley","WK",1],["Kirsten","WK",1],["Nate","WK",5]]],["2025-09-22",[["Jonny","DC",22]]],["2025-09-22",[["Naomi","PG",12],["Stevie","PG",6]]],["2025-09-22",[["Eberley","WK",5],["Nate","WK",10]]],["2025-09-23",[["Jonny","DC",14]]],["2025-09-23",[["Naomi","PG",10],["Stevie","PG",3]]],["2025-09-23",[["Eberley","WK",7],["Nate","WK",8]]],["2025-09-24",[["Jonny","DC",16]]],["2025-09-24",[["Naomi","PG",10]]],["2025-09-24",[["Nate","WK",10]]],["2025-09-25",[["Jonny","DC",14]]],["2025-09-25",[["Naomi","PG",10],["Stevie","PG",10]]],["2025-09-25",[["Eberley","WK",2],["Kirsten","WK",4],["Nate","WK",8]]],["2025-09-26",[["Jonny","DC",18]]],["2025-09-26",[["Naomi","PG",12],["Stevie","PG",13]]],["2025-09-26",[["Eberley","WK",3],["Kirsten","WK",1],["Nate","WK",6]]],["2025-09-29",[["Jonny","DC",20]]],["2025-09-29",[["Naomi","PG",11],["Stevie","PG",12]]],["2025-09-29",[["Eberley","WK",3],["Nate","WK",13]]],["2025-09-30",[["Jonny","DC",22]]],["2025-09-30",[["Naomi","PG",10]]],["2025-09-30",[["Eberley","WK",3],["Nate","WK",16]]],["2025-10-01",[["Jonny","DC",17]]],["2025-10-01",[["Naomi","PG",14]]],["2025-10-01",[["Eberley","WK",7],["Kirsten","WK",1],["Nate","WK",9]]],["2025-10-02",[["Jonny","DC",13]]],["2025-10-02",[["Naomi","PG",4],["Stevie","PG",7]]],["2025-10-02",[["Eberley","WK",5],["Nate","WK",4]]],["2025-10-03",[["Jonny","PG",11],["Naomi","PG",7],["Stevie","PG",9]]],["2025-10-06",[["Jonny","DC",19]]],["2025-10-06",[["Naomi","PG",4],["Stevie","PG",14]]],["2025-10-06",[["Eberley","WK",2],["Nate","WK",18]]],["2025-10-07",[["Jonny","DC",13]]],["2025-10-07",[["Naomi","PG",9],["Stevie","PG",8]]],["2025-10-07",[["Eberley","WK",7],["Kirsten","WK",4],["Nate","WK",8]]],["2025-10-08",[["Jonny","DC",22]]],["2025-10-08",[["Naomi","PG",11],["Stevie","PG",9]]],["2025-10-08",[["Eberley","WK",7],["Nate","WK",19]]],["2025-10-09",[["Jonny","DC",11]]],["2025-10-09",[["Naomi","PG",3],["Stevie","PG",12]]],["2025-10-09",[["Eberley","WK",2],["Kirsten","WK",5],["Nate","WK",5]]],["2025-10-10",[["Jonny","DC",12]]],["2025-10-10",[["Carmen","PG",1],["Eberley","PG",2],["Helena","PG",1],["Kevin","PG",6],["Kirsten","PG",4],["Mom","PG",1],["Naomi","PG",5],["Nate","PG",6],["Stevie","PG",10]]],["2025-10-13",[["Jonny","DC",18]]],["2025-10-13",[["Naomi","PG",8],["Stevie","PG",7]]],["2025-10-13",[["Eberley","WK",3],["Nate","WK",11]]],["2025-10-14",[["Jonny","DC",27]]],["2025-10-14",[["Naomi","PG",15],["Stevie","PG",13]]],["2025-10-14",[["Eberley","WK",6],["Kirsten","WK",2],["Nate","WK",14]]],["2025-10-15",[["Jonny","DC",14]]],["2025-10-15",[["Naomi","PG",6],["Stevie","PG",6]]],["2025-10-15",[["Eberley","WK",2],["Nate","WK",6]]],["2025-10-16",[["Jonny","DC",18]]],["2025-10-16",[["Naomi","PG",8],["Stevie","PG",14]]],["2025-10-16",[["Eberley","WK",3],["Nate","WK",7]]],["2025-10-17",[["Jonny","DC",17]]],["2025-10-17",[["Naomi","PG",9],["Stevie","PG",9]]],["2025-10-17",[["Eberley","WK",4],["Kirsten","WK",3],["Nate","WK",10]]],["2025-10-20",[["Naomi","PG",8],["Stevie","PG",8]]],["2025-10-21",[["Jonny","DC",12]]],["2025-10-21",[["Naomi","PG",7],["Stevie","PG",9]]],["2025-10-21",[["Eberley","WK",8],["Kirsten","WK",8],["Nate","WK",1]]],["2025-10-22",[["Jonny","DC",11]]],["2025-10-22",[["Naomi","PG",11],["Stevie","PG",8]]],["2025-10-22",[["Eberley","WK",5],["Nate","WK",7]]],["2025-10-23",[["Jonny","DC",17]]],["2025-10-23",[["Naomi","PG",6],["Stevie","PG",12]]],["2025-10-23",[["Eberley","WK",6],["Nate","WK",14]]],["2025-10-24",[["Jonny","DC",15]]],["2025-10-24",[["Naomi","PG",14],["Stevie","PG",14]]],["2025-10-24",[["Eberley","WK",7],["Kirsten","WK",4],["Nate","WK",9]]],["2025-10-28",[["Jonny","DC",12]]],["2025-10-28",[["Naomi","PG",5],["Stevie","PG",10]]],["2025-10-28",[["Eberley","WK",5],["Nate","WK",7]]],["2025-10-29",[["Jonny","DC",23]]],["2025-10-29",[["Eberley","WK",3],["Nate","WK",12]]],["2025-10-30",[["Naomi","PG",6],["Stevie","PG",8]]],["2025-10-30",[["Eberley","WK",2],["Kirsten","WK",2],["Nate","WK",16]]],["2025-10-31",[["Naomi","PG",8],["Stevie","PG",13]]],["2025-10-31",[["Eberley","WK",7],["Kirsten","WK",1],["Nate","WK",8]]],["2025-11-03",[["Jonny","DC",21]]],["2025-11-03",[["Naomi","PG",8],["Stevie","PG",9]]],["2025-11-03",[["Eberley","WK",8],["Nate","WK",18]]],["2025-11-04",[["Jonny","DC",16]]],["2025-11-04",[["Naomi","PG",11],["Stevie","PG",13]]],["2025-11-04",[["Eberley","WK",4],["Kirsten","WK",9],["Nate","WK",10]]],["2025-11-05",[["Jonny","DC",16]]],["2025-11-05",[["Naomi","PG",8],["Stevie","PG",17]]],["2025-11-05",[["Eberley","WK",2],["Nate","WK",15]]],["2025-11-06",[["Jonny","DC",20]]],["2025-11-07",[["Jonny","DC",23]]],["2025-11-07",[["Naomi","PG",6],["Stevie","PG",10]]],["2025-11-07",[["Eberley","WK",7],["Nate","WK",15]]],["2025-11-10",[["Jonny","DC",18]]],["2025-11-10",[["Naomi","PG",7],["Stevie","PG",9]]],["2025-11-11",[["Jonny","DC",19]]],["2025-11-11",[["Naomi","PG",17],["Stevie","PG",8]]],["2025-11-11",[["Eberley","WK",11],["Kirsten","WK",7],["Nate","WK",7]]],["2025-11-12",[["Jonny","DC",20]]],["2025-11-12",[["Naomi","PG",5],["Stevie","PG",11]]],["2025-11-12",[["Eberley","WK",3],["Kirsten","WK",3],["Nate","WK",12]]],["2025-11-13",[["Jonny","DC",12]]],["2025-11-13",[["Naomi","PG",7],["Stevie","PG",6]]],["2025-11-13",[["Eberley","WK",4],["Nate","WK",10]]],["2025-11-17",[["Jonny","DC",24]]],["2025-11-17",[["Naomi","PG",6],["Stevie","PG",6]]],["2025-11-17",[["Eberley","WK",6],["Nate","WK",13]]],["2025-11-18",[["Jonny","DC",13]]],["2025-11-18",[["Naomi","PG",12],["Stevie","PG",9]]],["2025-11-18",[["Eberley","WK",5],["Kirsten","WK",1],["Nate","WK",9]]],["2025-11-19",[["Jonny","DC",25]]],["2025-11-19",[["Naomi","PG",13],["Stevie","PG",10]]],["2025-11-19",[["Eberley","WK",4],["Nate","WK",15]]],["2025-11-20",[["Jonny","DC",18]]],["2025-11-20",[["Naomi","PG",4],["Stevie","PG",7]]],["2025-11-20",[["Nate","WK",13]]],["2025-11-21",[["Jonny","DC",18]]],["2025-11-21",[["Eberley","WK",1],["Nate","WK",13]]],["2025-11-24",[["Naomi","PG",6],["Stevie","PG",17]]],["2025-11-24",[["Eberley","WK",3],["Kirsten","WK",3],["Nate","WK",12]]],["2025-11-25",[["Jonny","DC",18]]],["2025-11-25",[["Eberley","WK",4],["Kirsten","WK",4],["Nate","WK",5]]],["2025-11-26",[["Naomi","PG",4],["Stevie","PG",10]]],["2025-11-27",[["Jonny","DC",14],["Jonny","DC",14]]],["2025-11-27",[["Naomi","PG",5],["Naomi","PG",5],["Stevie","PG",9],["Stevie","PG",9]]],["2025-11-27",[["Eberley","WK",7],["Eberley","WK",7],["Nate","WK",14],["Nate","WK",14]]],["2025-11-28",[["Jonny","DC",22]]],["2025-11-28",[["Naomi","PG",18],["Stevie","PG",5]]],["2025-11-28",[["Eberley","WK",6],["Kirsten","WK",6],["Nate","WK",11]]],["2025-12-01",[["Jonny","DC",19]]],["2025-12-01",[["Naomi","PG",7],["Stevie","PG",17]]],["2025-12-01",[["Eberley","WK",4],["Kirsten","WK",1],["Nate","WK",10]]],["2025-12-02",[["Eberley","WK",3],["Nate","WK",15]]],["2025-12-03",[["Jonny","DC",24]]],["2025-12-03",[["Mom","PG",2],["Naomi","PG",6],["Stevie","PG",12]]],["2025-12-03",[["Eberley","WK",4],["Helena","WK",7],["Nate","WK",7]]],["2025-12-04",[["Jonny","DC",17]]],["2025-12-04",[["Eberley","WK",8],["Nate","WK",8]]],["2025-12-05",[["Jonny","DC",17]]],["2025-12-05",[["Naomi","PG",4],["Stevie","PG",6]]],["2025-12-05",[["Eberley","WK",9]]],["2025-12-08",[["Jonny","DC",22]]],["2025-12-08",[["Naomi","PG",18],["Stevie","PG",8]]],["2025-12-08",[["Eberley","WK",6],["Nate","WK",21]]],["2025-12-09",[["Jonny","DC",14]]],["2025-12-09",[["Naomi","PG",8],["Stevie","PG",9]]],["2025-12-09",[["Eberley","WK",1],["Nate","WK",6]]],["2025-12-10",[["Jonny","DC",19]]],["2025-12-10",[["Naomi","PG",5],["Stevie","PG",8]]],["2025-12-10",[["Eberley","WK",4],["Nate","WK",12]]],["2025-12-11",[["Jonny","DC",15]]],["2025-12-11",[["Naomi","PG",7],["Stevie","PG",8]]],["2025-12-11",[["Eberley","WK",8],["Nate","WK",9]]],["2025-12-12",[["Jonny","DC",26]]],["2025-12-12",[["Eberley","WK",6],["Nate","WK",12]]],["2025-12-15",[["Jonny","DC",25]]],["2025-12-15",[["Eberley","WK",5],["Kirsten","WK",2],["Nate","WK",13]]],["2025-12-16",[["Jonny","DC",19]]],["2025-12-16",[["Naomi","PG",5],["Stevie","PG",13]]],["2025-12-16",[["Eberley","WK",13],["Nate","WK",13]]],["2025-12-17",[["Jonny","DC",15],["Jonny","DC",15]]],["2025-12-17",[["Naomi","PG",8],["Naomi","PG",8],["Stevie","PG",13],["Stevie","PG",13]]],["2025-12-17",[["Eberley","WK",1],["Eberley","WK",1],["Kirsten","WK",8],["Kirsten","WK",8],["Nate","WK",8],["Nate","WK",8]]],["2025-12-18",[["Jonny","DC",18]]],["2025-12-18",[["Naomi","PG",7],["Stevie","PG",14]]],["2025-12-18",[["Eberley","WK",1],["Nate","WK",9]]],["2025-12-19",[["Jonny","DC",21]]],["2025-12-19",[["Naomi","PG",14],["Stevie","PG",9]]],["2025-12-19",[["Eberley","WK",5],["Kirsten","WK",7],["Nate","WK",18]]],["2025-12-22",[["Jonny","DC",16]]],["2025-12-22",[["Naomi","PG",6],["Stevie","PG",7]]],["2025-12-22",[["Eberley","WK",5],["Kirsten","WK",2],["Nate","WK",10]]],["2025-12-23",[["Naomi","PG",10],["Stevie","PG",10]]],["2025-12-23",[["Eberley","WK",8],["Nate","WK",6]]],["2025-12-24",[["Jonny","DC",17],["Julia","DC",8]]],["2025-12-24",[["Eberley","WK",6],["Nate","WK",11]]],["2025-12-25",[["Carmen","PG",1],["Jonny","PG",17],["Mom","PG",1],["Naomi","PG",5],["Stevie","PG",6]]],["2025-12-25",[["Eberley","WK",4],["Nate","WK",11]]],["2025-12-26",[["Beckett","DC",3],["Jonny","DC",8]]],["2025-12-26",[["Naomi","PG",8],["Stevie","PG",13]]],["2025-12-26",[["Eberley","WK",4],["Nate","WK",10]]],["2025-12-29",[["Jonny","DC",18]]],["2025-12-29",[["Naomi","PG",9],["Stevie","PG",6]]],["2025-12-29",[["Eberley","WK",8],["Nate","WK",12]]],["2025-12-30",[["Jonny","DC",21]]],["2025-12-30",[["Naomi","PG",2],["Stevie","PG",9]]],["2025-12-30",[["Eberley","WK",6],["Kirsten","WK",1],["Nate","WK",12]]],["2025-12-31",[["Jonny","DC",10]]],["2025-12-31",[["Naomi","PG",3],["Stevie","PG",11]]],["2025-12-31",[["Eberley","WK",4],["Nate","WK",12]]],["2026-01-02",[["Jonny","DC",14],["Julia","DC",5]]],["2026-01-02",[["Naomi","PG",10],["Stevie","PG",7]]],["2026-01-02",[["Eberley","WK",5],["Kirsten","WK",1],["Nate","WK",14]]],["2026-01-05",[["Naomi","PG",3],["Stevie","PG",8]]],["2026-01-05",[["Eberley","WK",4],["Nate","WK",9]]],["2026-01-06",[["Jonny","DC",23]]],["2026-01-07",[["Jonny","DC",14]]],["2026-01-07",[["Naomi","PG",7],["Stevie","PG",11]]],["2026-01-07",[["Eberley","WK",5],["Kirsten","WK",2],["Nate","WK",6]]],["2026-01-08",[["Jonny","DC",16]]],["2026-01-08",[["Naomi","PG",13],["Stevie","PG",4]]],["2026-01-08",[["Eberley","WK",6],["Kirsten","WK",2],["Nate","WK",8]]],["2026-01-09",[["Jonny","DC",17]]],["2026-01-09",[["Naomi","PG",4],["Stevie","PG",8]]],["2026-01-09",[["Kirsten","WK",2],["Nate","WK",8]]],["2026-01-12",[["Jonny","DC",18]]],["2026-01-12",[["Eberley","WK",3],["Nate","WK",12]]],["2026-01-13",[["Jonny","DC",24]]],["2026-01-13",[["Naomi","PG",13],["Stevie","PG",12]]],["2026-01-13",[["Eberley","WK",4],["Nate","WK",13]]],["2026-01-14",[["Jonny","DC",24]]],["2026-01-14",[["Eberley","WK",4],["Kirsten","WK",1],["Nate","WK",7]]],["2026-01-15",[["Naomi","PG",6],["Stevie","PG",12]]],["2026-01-16",[["Jonny","DC",16],["Julia","DC",5]]],["2026-01-16",[["Naomi","PG",7],["Stevie","PG",15]]],["2026-01-16",[["Eberley","WK",8],["Helena","WK",9]]],["2026-01-19",[["Eberley","WK",3],["Nate","WK",8]]],["2026-01-20",[["Jonny","DC",17]]],["2026-01-20",[["Naomi","PG",7],["Stevie","PG",1]]],["2026-01-20",[["Eberley","WK",3],["Kirsten","WK",1],["Nate","WK",9]]],["2026-01-21",[["Jonny","DC",14]]],["2026-01-21",[["Eberley","WK",5],["Nate","WK",8]]],["2026-01-22",[["Jonny","DC",13]]],["2026-01-22",[["Stevie","PG",6]]],["2026-01-22",[["Eberley","WK",7],["Kirsten","WK",6]]],["2026-01-23",[["Jonny","DC",18]]],["2026-01-23",[["Eberley","WK",5],["Nate","WK",12]]],["2026-01-26",[["Jonny","DC",13]]],["2026-01-26",[["Naomi","PG",4],["Stevie","PG",6]]],["2026-01-26",[["Kirsten","WK",1],["Nate","WK",9]]],["2026-01-27",[["Jonny","DC",11],["Julia","DC",4]]],["2026-01-27",[["Naomi","PG",4],["Stevie","PG",6]]],["2026-01-27",[["Eberley","WK",4],["Nate","WK",9]]],["2026-01-28",[["Jonny","DC",12],["Julia","DC",6]]],["2026-01-28",[["Naomi","PG",7],["Stevie","PG",11]]],["2026-01-28",[["Eberley","WK",2],["Nate","WK",12]]],["2026-01-29",[["Jonny","DC",21]]],["2026-01-30",[["Jonny","DC",20],["Julia","DC",4]]],["2026-02-02",[["Jonny","DC",17]]],["2026-02-03",[["Jonny","DC",8],["Julia","DC",2]]],["2026-02-03",[["Naomi","PG",6]]],["2026-02-03",[["Stevie","PG",4]]],["2026-02-03",[["Eberley","WK",4],["Nate","WK",10]]],["2026-02-04",[["Jonny","DC",12],["Julia","DC",6]]],["2026-02-04",[["Stevie","PG",5]]],["2026-02-04",[["Eberley","WK",2],["Kirsten","WK",4],["Nate","WK",14]]],["2026-02-05",[["Naomi","PG",5],["Stevie","PG",11]]],["2026-02-05",[["Naomi","PG",6]]],["2026-02-05",[["Eberley","WK",4],["Nate","WK",13]]],["2026-02-06",[["Jonny","DC",15],["Julia","DC",2]]],["2026-02-06",[["Eberley","WK",3],["Nate","WK",8]]],["2026-02-09",[["Naomi","PG",4],["Stevie","PG",6]]],["2026-02-09",[["Eberley","WK",3],["Kirsten","WK",4],["Nate","WK",12]]],["2026-02-10",[["Jonny","DC",12]]],["2026-02-10",[["Jonny","DC",9],["Julia","DC",4]]],["2026-02-10",[["Eberley","WK",7],["Nate","WK",7]]],["2026-02-11",[["Jonny","DC",5]]],["2026-02-12",[["Eberley","WK",4],["Nate","WK",6]]],["2026-02-13",[["Jonny","DC",16]]],["2026-02-16",[["Jonny","DC",14]]],["2026-02-16",[["Eberley","WK",3],["Kirsten","WK",1],["Nate","WK",5]]],["2026-02-17",[["Jonny","DC",12],["Julia","DC",5]]],["2026-02-17",[["Naomi","PG",8],["Stevie","PG",6]]],["2026-02-17",[["Eberley","WK",7],["Nate","WK",11]]],["2026-02-18",[["Jonny","DC",20]]],["2026-02-18",[["Naomi","PG",10],["Stevie","PG",8]]],["2026-02-18",[["Eberley","WK",3],["Nate","WK",14]]],["2026-02-19",[["Jonny","DC",16],["Julia","DC",8]]],["2026-02-20",[["Jonny","DC",25]]],["2026-02-20",[["Naomi","PG",1]]],["2026-02-20",[["Eberley","WK",1],["Nate","WK",10]]],["2026-02-23",[["Naomi","PG",4],["Stevie","PG",10]]],["2026-02-23",[["Eberley","WK",2],["Nate","WK",14]]],["2026-02-24",[["Jonny","DC",22]]],["2026-02-24",[["Naomi","PG",3],["Stevie","PG",11]]],["2026-02-24",[["Helena","WK",3],["Kirsten","WK",3],["Nate","WK",8]]],["2026-02-25",[["Jonny","DC",17]]],["2026-02-26",[["Naomi","DC",3],["Stevie","DC",8]]],["2026-03-02",[["Naomi","PG",8]]],["2026-03-03",[["Naomi","PG",13],["Stevie","PG",9]]],["2026-03-04",[["Naomi","PG",10],["Stevie","PG",7]]],["2026-03-05",[["Jonny","DC",21]]],["2026-03-05",[["Naomi","PG",9],["Stevie","PG",14]]],["2026-03-06",[["Jonny","DC",27],["Julia","DC",3]]],["2026-03-13",[["Jonny","DC",21],["Naomi","PG",3],["Nate","WK",3]]],["2026-03-16",[["Jonny","DC",20]]],["2026-03-23",[["Jonny","DC",14]]],["2026-03-23",[["Helena","WK",3],["Kirsten","WK",4],["Nate","WK",9]]],["2026-03-24",[["Eberley","WK",5],["Nate","WK",7]]],["2026-03-25",[["Jonny","DC",31]]],["2026-03-25",[["Naomi","PG",10],["Stevie","PG",9]]],["2026-03-25",[["Eberley","WK",6],["Helena","WK",3],["Nate","WK",11]]],["2026-03-26",[["Jonny","DC",26]]],["2026-03-27",[["Jonny","DC",22]]],["2026-03-27",[["Naomi","PG",8],["Stevie","PG",16]]],["2026-03-30",[["Eberley","WK",5],["Nate","WK",9]]],["2026-03-31",[["Jonny","DC",26]]],["2026-03-31",[["Eberley","WK",2],["Nate","WK",14]]],["2026-03-31",[["Kirsten","WK",1]]],["2026-04-01",[["Jonny","DC",19],["Julia","DC",7]]],["2026-04-01",[["Naomi","PG",7],["Stevie","PG",10]]],["2026-04-01",[["Eberley","WK",2],["Nate","WK",21]]],["2026-04-02",[["Jonny","DC",16]]],["2026-04-03",[["Jonny","DC",19]]],["2026-04-03",[["Kirsten","WK",3]]],["2026-04-06",[["Jonny","DC",23]]],["2026-04-06",[["Naomi","PG",6],["Stevie","PG",7]]],["2026-04-07",[["Jonny","DC",18]]],["2026-04-07",[["Eberley","WK",5],["Kirsten","WK",5],["Nate","WK",7]]],["2026-04-08",[["Naomi","PG",7],["Stevie","PG",8]]],["2026-04-09",[["Jonny","DC",18]]],["2026-04-10",[["Jonny","DC",20]]],["2026-04-13",[["Jonny","DC",19]]],["2026-04-13",[["Naomi","PG",2],["Stevie","PG",14]]],["2026-04-14",[["Jonny","DC",22]]],["2026-04-14",[["Naomi","PG",9],["Stevie","PG",11]]],["2026-04-15",[["Jonny","DC",14]]],["2026-04-16",[["Jonny","DC",19]]],["2026-04-20",[["Naomi","PG",10],["Stevie","PG",4]]],["2026-04-21",[["Naomi","PG",10],["Stevie","PG",5]]],["2026-04-21",[["Eberley","WK",1],["Kirsten","WK",1]]],["2026-04-22",[["Jonny","DC",21]]],["2026-04-22",[["Naomi","PG",10],["Stevie","PG",12]]],["2026-04-22",[["Eberley","WK",5],["Nate","WK",6]]],["2026-04-23",[["Jonny","DC",4]]],["2026-04-27",[["Jonny","DC",24]]],["2026-04-27",[["Eberley","WK",5],["Nate","WK",12]]],["2026-04-30",[["Jonny","DC",20]]],["2026-05-05",[["Naomi","PG",8],["Stevie","PG",9]]],["2026-05-05",[["Eberley","WK",2],["Nate","WK",12]]],["2026-05-06",[["Jonny","DC",23]]],["2026-05-06",[["Naomi","PG",10],["Stevie","PG",9]]],["2026-05-06",[["Eberley","WK",2],["Nate","WK",12]]],["2026-05-07",[["Jonny","DC",22]]],["2026-05-11",[["Naomi","PG",4],["Stevie","PG",13]]],["2026-05-11",[["Eberley","WK",8],["Kirsten","WK",1],["Nate","WK",10]]],["2026-05-12",[["Jonny","DC",23]]],["2026-05-12",[["Naomi","PG",5],["Stevie","PG",12]]],["2026-05-12",[["Eberley","WK",4],["Nate","WK",13]]],["2026-05-18",[["Naomi","PG",2],["Stevie","PG",8]]],["2026-05-18",[["Eberley","WK",5],["Kirsten","WK",1],["Nate","WK",13]]],["2026-05-19",[["Jonny","DC",15]]],["2026-05-19",[["Eberley","WK",6],["Nate","WK",13]]],["2026-05-20",[["Jonny","DC",6]]],["2026-05-20",[["Eberley","WK",3],["Nate","WK",16]]],["2026-05-21",[["Dad","DC",2],["Jonny","DC",15],["Julia","DC",6],["Mom","DC",2]]],["2026-05-21",[["Naomi","PG",6],["Stevie","PG",13]]],["2026-05-21",[["Eberley","WK",3],["Nate","WK",15]]],["2026-05-22",[["Eberley","WK",1],["Nate","WK",9]]],["2026-05-25",[["Jonny","DC",22]]],["2026-05-25",[["Eberley","WK",4],["Nate","WK",11]]]],"s":"2026-01-01"};
+const APP_DATA = {"c":{"a":16.793732809171207,"b":0.9586532406447151,"raw":{"1":16.8130081300813,"2":8.426229508196721,"3":5.920634920634921,"9":4.0,"4":8.5625,"6":5.666666666666667,"5":6.0}},"g":[["2025-09-18",[["Jonny","DC",13]]],["2025-09-18",[["Naomi","PG",10],["Stevie","PG",8]]],["2025-09-18",[["Eberley","WK",8],["Nate","WK",9]]],["2025-09-19",[["Naomi","PG",9],["Stevie","PG",8]]],["2025-09-19",[["Eberley","WK",1],["Kirsten","WK",1],["Nate","WK",5]]],["2025-09-22",[["Jonny","DC",22]]],["2025-09-22",[["Naomi","PG",12],["Stevie","PG",6]]],["2025-09-22",[["Eberley","WK",5],["Nate","WK",10]]],["2025-09-23",[["Jonny","DC",14]]],["2025-09-23",[["Naomi","PG",10],["Stevie","PG",3]]],["2025-09-23",[["Eberley","WK",7],["Nate","WK",8]]],["2025-09-24",[["Jonny","DC",16]]],["2025-09-24",[["Naomi","PG",10]]],["2025-09-24",[["Nate","WK",10]]],["2025-09-25",[["Jonny","DC",14]]],["2025-09-25",[["Naomi","PG",10],["Stevie","PG",10]]],["2025-09-25",[["Eberley","WK",2],["Kirsten","WK",4],["Nate","WK",8]]],["2025-09-26",[["Jonny","DC",18]]],["2025-09-26",[["Naomi","PG",12],["Stevie","PG",13]]],["2025-09-26",[["Eberley","WK",3],["Kirsten","WK",1],["Nate","WK",6]]],["2025-09-29",[["Jonny","DC",20]]],["2025-09-29",[["Naomi","PG",11],["Stevie","PG",12]]],["2025-09-29",[["Eberley","WK",3],["Nate","WK",13]]],["2025-09-30",[["Jonny","DC",22]]],["2025-09-30",[["Naomi","PG",10]]],["2025-09-30",[["Eberley","WK",3],["Nate","WK",16]]],["2025-10-01",[["Jonny","DC",17]]],["2025-10-01",[["Naomi","PG",14]]],["2025-10-01",[["Eberley","WK",7],["Kirsten","WK",1],["Nate","WK",9]]],["2025-10-02",[["Jonny","DC",13]]],["2025-10-02",[["Naomi","PG",4],["Stevie","PG",7]]],["2025-10-02",[["Eberley","WK",5],["Nate","WK",4]]],["2025-10-03",[["Jonny","PG",11],["Naomi","PG",7],["Stevie","PG",9]]],["2025-10-06",[["Jonny","DC",19]]],["2025-10-06",[["Naomi","PG",4],["Stevie","PG",14]]],["2025-10-06",[["Eberley","WK",2],["Nate","WK",18]]],["2025-10-07",[["Jonny","DC",13]]],["2025-10-07",[["Naomi","PG",9],["Stevie","PG",8]]],["2025-10-07",[["Eberley","WK",7],["Kirsten","WK",4],["Nate","WK",8]]],["2025-10-08",[["Jonny","DC",22]]],["2025-10-08",[["Naomi","PG",11],["Stevie","PG",9]]],["2025-10-08",[["Eberley","WK",7],["Nate","WK",19]]],["2025-10-09",[["Jonny","DC",11]]],["2025-10-09",[["Naomi","PG",3],["Stevie","PG",12]]],["2025-10-09",[["Eberley","WK",2],["Kirsten","WK",5],["Nate","WK",5]]],["2025-10-10",[["Jonny","DC",12]]],["2025-10-10",[["Carmen","PG",1],["Eberley","PG",2],["Helena","PG",1],["Kevin","PG",6],["Kirsten","PG",4],["Mom","PG",1],["Naomi","PG",5],["Nate","PG",6],["Stevie","PG",10]]],["2025-10-13",[["Jonny","DC",18]]],["2025-10-13",[["Naomi","PG",8],["Stevie","PG",7]]],["2025-10-13",[["Eberley","WK",3],["Nate","WK",11]]],["2025-10-14",[["Jonny","DC",27]]],["2025-10-14",[["Naomi","PG",15],["Stevie","PG",13]]],["2025-10-14",[["Eberley","WK",6],["Kirsten","WK",2],["Nate","WK",14]]],["2025-10-15",[["Jonny","DC",14]]],["2025-10-15",[["Naomi","PG",6],["Stevie","PG",6]]],["2025-10-15",[["Eberley","WK",2],["Nate","WK",6]]],["2025-10-16",[["Jonny","DC",18]]],["2025-10-16",[["Naomi","PG",8],["Stevie","PG",14]]],["2025-10-16",[["Eberley","WK",3],["Nate","WK",7]]],["2025-10-17",[["Jonny","DC",17]]],["2025-10-17",[["Naomi","PG",9],["Stevie","PG",9]]],["2025-10-17",[["Eberley","WK",4],["Kirsten","WK",3],["Nate","WK",10]]],["2025-10-20",[["Naomi","PG",8],["Stevie","PG",8]]],["2025-10-21",[["Jonny","DC",12]]],["2025-10-21",[["Naomi","PG",7],["Stevie","PG",9]]],["2025-10-21",[["Eberley","WK",8],["Kirsten","WK",8],["Nate","WK",1]]],["2025-10-22",[["Jonny","DC",11]]],["2025-10-22",[["Naomi","PG",11],["Stevie","PG",8]]],["2025-10-22",[["Eberley","WK",5],["Nate","WK",7]]],["2025-10-23",[["Jonny","DC",17]]],["2025-10-23",[["Naomi","PG",6],["Stevie","PG",12]]],["2025-10-23",[["Eberley","WK",6],["Nate","WK",14]]],["2025-10-24",[["Jonny","DC",15]]],["2025-10-24",[["Naomi","PG",14],["Stevie","PG",14]]],["2025-10-24",[["Eberley","WK",7],["Kirsten","WK",4],["Nate","WK",9]]],["2025-10-28",[["Jonny","DC",12]]],["2025-10-28",[["Naomi","PG",5],["Stevie","PG",10]]],["2025-10-28",[["Eberley","WK",5],["Nate","WK",7]]],["2025-10-29",[["Jonny","DC",23]]],["2025-10-29",[["Eberley","WK",3],["Nate","WK",12]]],["2025-10-30",[["Naomi","PG",6],["Stevie","PG",8]]],["2025-10-30",[["Eberley","WK",2],["Kirsten","WK",2],["Nate","WK",16]]],["2025-10-31",[["Naomi","PG",8],["Stevie","PG",13]]],["2025-10-31",[["Eberley","WK",7],["Kirsten","WK",1],["Nate","WK",8]]],["2025-11-03",[["Jonny","DC",21]]],["2025-11-03",[["Naomi","PG",8],["Stevie","PG",9]]],["2025-11-03",[["Eberley","WK",8],["Nate","WK",18]]],["2025-11-04",[["Jonny","DC",16]]],["2025-11-04",[["Naomi","PG",11],["Stevie","PG",13]]],["2025-11-04",[["Eberley","WK",4],["Kirsten","WK",9],["Nate","WK",10]]],["2025-11-05",[["Jonny","DC",16]]],["2025-11-05",[["Naomi","PG",8],["Stevie","PG",17]]],["2025-11-05",[["Eberley","WK",2],["Nate","WK",15]]],["2025-11-06",[["Jonny","DC",20]]],["2025-11-07",[["Jonny","DC",23]]],["2025-11-07",[["Naomi","PG",6],["Stevie","PG",10]]],["2025-11-07",[["Eberley","WK",7],["Nate","WK",15]]],["2025-11-10",[["Jonny","DC",18]]],["2025-11-10",[["Naomi","PG",7],["Stevie","PG",9]]],["2025-11-11",[["Jonny","DC",19]]],["2025-11-11",[["Naomi","PG",17],["Stevie","PG",8]]],["2025-11-11",[["Eberley","WK",11],["Kirsten","WK",7],["Nate","WK",7]]],["2025-11-12",[["Jonny","DC",20]]],["2025-11-12",[["Naomi","PG",5],["Stevie","PG",11]]],["2025-11-12",[["Eberley","WK",3],["Kirsten","WK",3],["Nate","WK",12]]],["2025-11-13",[["Jonny","DC",12]]],["2025-11-13",[["Naomi","PG",7],["Stevie","PG",6]]],["2025-11-13",[["Eberley","WK",4],["Nate","WK",10]]],["2025-11-17",[["Jonny","DC",24]]],["2025-11-17",[["Naomi","PG",6],["Stevie","PG",6]]],["2025-11-17",[["Eberley","WK",6],["Nate","WK",13]]],["2025-11-18",[["Jonny","DC",13]]],["2025-11-18",[["Naomi","PG",12],["Stevie","PG",9]]],["2025-11-18",[["Eberley","WK",5],["Kirsten","WK",1],["Nate","WK",9]]],["2025-11-19",[["Jonny","DC",25]]],["2025-11-19",[["Naomi","PG",13],["Stevie","PG",10]]],["2025-11-19",[["Eberley","WK",4],["Nate","WK",15]]],["2025-11-20",[["Jonny","DC",18]]],["2025-11-20",[["Naomi","PG",4],["Stevie","PG",7]]],["2025-11-20",[["Nate","WK",13]]],["2025-11-21",[["Jonny","DC",18]]],["2025-11-21",[["Eberley","WK",1],["Nate","WK",13]]],["2025-11-24",[["Naomi","PG",6],["Stevie","PG",17]]],["2025-11-24",[["Eberley","WK",3],["Kirsten","WK",3],["Nate","WK",12]]],["2025-11-25",[["Jonny","DC",18]]],["2025-11-25",[["Eberley","WK",4],["Kirsten","WK",4],["Nate","WK",5]]],["2025-11-26",[["Naomi","PG",4],["Stevie","PG",10]]],["2025-11-27",[["Jonny","DC",14],["Jonny","DC",14]]],["2025-11-27",[["Naomi","PG",5],["Naomi","PG",5],["Stevie","PG",9],["Stevie","PG",9]]],["2025-11-27",[["Eberley","WK",7],["Eberley","WK",7],["Nate","WK",14],["Nate","WK",14]]],["2025-11-28",[["Jonny","DC",22]]],["2025-11-28",[["Naomi","PG",18],["Stevie","PG",5]]],["2025-11-28",[["Eberley","WK",6],["Kirsten","WK",6],["Nate","WK",11]]],["2025-12-01",[["Jonny","DC",19]]],["2025-12-01",[["Naomi","PG",7],["Stevie","PG",17]]],["2025-12-01",[["Eberley","WK",4],["Kirsten","WK",1],["Nate","WK",10]]],["2025-12-02",[["Eberley","WK",3],["Nate","WK",15]]],["2025-12-03",[["Jonny","DC",24]]],["2025-12-03",[["Mom","PG",2],["Naomi","PG",6],["Stevie","PG",12]]],["2025-12-03",[["Eberley","WK",4],["Helena","WK",7],["Nate","WK",7]]],["2025-12-04",[["Jonny","DC",17]]],["2025-12-04",[["Eberley","WK",8],["Nate","WK",8]]],["2025-12-05",[["Jonny","DC",17]]],["2025-12-05",[["Naomi","PG",4],["Stevie","PG",6]]],["2025-12-05",[["Eberley","WK",9]]],["2025-12-08",[["Jonny","DC",22]]],["2025-12-08",[["Naomi","PG",18],["Stevie","PG",8]]],["2025-12-08",[["Eberley","WK",6],["Nate","WK",21]]],["2025-12-09",[["Jonny","DC",14]]],["2025-12-09",[["Naomi","PG",8],["Stevie","PG",9]]],["2025-12-09",[["Eberley","WK",1],["Nate","WK",6]]],["2025-12-10",[["Jonny","DC",19]]],["2025-12-10",[["Naomi","PG",5],["Stevie","PG",8]]],["2025-12-10",[["Eberley","WK",4],["Nate","WK",12]]],["2025-12-11",[["Jonny","DC",15]]],["2025-12-11",[["Naomi","PG",7],["Stevie","PG",8]]],["2025-12-11",[["Eberley","WK",8],["Nate","WK",9]]],["2025-12-12",[["Jonny","DC",26]]],["2025-12-12",[["Eberley","WK",6],["Nate","WK",12]]],["2025-12-15",[["Jonny","DC",25]]],["2025-12-15",[["Eberley","WK",5],["Kirsten","WK",2],["Nate","WK",13]]],["2025-12-16",[["Jonny","DC",19]]],["2025-12-16",[["Naomi","PG",5],["Stevie","PG",13]]],["2025-12-16",[["Eberley","WK",13],["Nate","WK",13]]],["2025-12-17",[["Jonny","DC",15],["Jonny","DC",15]]],["2025-12-17",[["Naomi","PG",8],["Naomi","PG",8],["Stevie","PG",13],["Stevie","PG",13]]],["2025-12-17",[["Eberley","WK",1],["Eberley","WK",1],["Kirsten","WK",8],["Kirsten","WK",8],["Nate","WK",8],["Nate","WK",8]]],["2025-12-18",[["Jonny","DC",18]]],["2025-12-18",[["Naomi","PG",7],["Stevie","PG",14]]],["2025-12-18",[["Eberley","WK",1],["Nate","WK",9]]],["2025-12-19",[["Jonny","DC",21]]],["2025-12-19",[["Naomi","PG",14],["Stevie","PG",9]]],["2025-12-19",[["Eberley","WK",5],["Kirsten","WK",7],["Nate","WK",18]]],["2025-12-22",[["Jonny","DC",16]]],["2025-12-22",[["Naomi","PG",6],["Stevie","PG",7]]],["2025-12-22",[["Eberley","WK",5],["Kirsten","WK",2],["Nate","WK",10]]],["2025-12-23",[["Naomi","PG",10],["Stevie","PG",10]]],["2025-12-23",[["Eberley","WK",8],["Nate","WK",6]]],["2025-12-24",[["Jonny","DC",17],["Julia","DC",8]]],["2025-12-24",[["Eberley","WK",6],["Nate","WK",11]]],["2025-12-25",[["Carmen","PG",1],["Jonny","PG",17],["Mom","PG",1],["Naomi","PG",5],["Stevie","PG",6]]],["2025-12-25",[["Eberley","WK",4],["Nate","WK",11]]],["2025-12-26",[["Beckett","DC",3],["Jonny","DC",8]]],["2025-12-26",[["Naomi","PG",8],["Stevie","PG",13]]],["2025-12-26",[["Eberley","WK",4],["Nate","WK",10]]],["2025-12-29",[["Jonny","DC",18]]],["2025-12-29",[["Naomi","PG",9],["Stevie","PG",6]]],["2025-12-29",[["Eberley","WK",8],["Nate","WK",12]]],["2025-12-30",[["Jonny","DC",21]]],["2025-12-30",[["Naomi","PG",2],["Stevie","PG",9]]],["2025-12-30",[["Eberley","WK",6],["Kirsten","WK",1],["Nate","WK",12]]],["2025-12-31",[["Jonny","DC",10]]],["2025-12-31",[["Naomi","PG",3],["Stevie","PG",11]]],["2025-12-31",[["Eberley","WK",4],["Nate","WK",12]]],["2026-01-02",[["Jonny","DC",14],["Julia","DC",5]]],["2026-01-02",[["Naomi","PG",10],["Stevie","PG",7]]],["2026-01-02",[["Eberley","WK",5],["Kirsten","WK",1],["Nate","WK",14]]],["2026-01-05",[["Naomi","PG",3],["Stevie","PG",8]]],["2026-01-05",[["Eberley","WK",4],["Nate","WK",9]]],["2026-01-06",[["Jonny","DC",23]]],["2026-01-07",[["Jonny","DC",14]]],["2026-01-07",[["Naomi","PG",7],["Stevie","PG",11]]],["2026-01-07",[["Eberley","WK",5],["Kirsten","WK",2],["Nate","WK",6]]],["2026-01-08",[["Jonny","DC",16]]],["2026-01-08",[["Naomi","PG",13],["Stevie","PG",4]]],["2026-01-08",[["Eberley","WK",6],["Kirsten","WK",2],["Nate","WK",8]]],["2026-01-09",[["Jonny","DC",17]]],["2026-01-09",[["Naomi","PG",4],["Stevie","PG",8]]],["2026-01-09",[["Kirsten","WK",2],["Nate","WK",8]]],["2026-01-12",[["Jonny","DC",18]]],["2026-01-12",[["Eberley","WK",3],["Nate","WK",12]]],["2026-01-13",[["Jonny","DC",24]]],["2026-01-13",[["Naomi","PG",13],["Stevie","PG",12]]],["2026-01-13",[["Eberley","WK",4],["Nate","WK",13]]],["2026-01-14",[["Jonny","DC",24]]],["2026-01-14",[["Eberley","WK",4],["Kirsten","WK",1],["Nate","WK",7]]],["2026-01-15",[["Naomi","PG",6],["Stevie","PG",12]]],["2026-01-16",[["Jonny","DC",16],["Julia","DC",5]]],["2026-01-16",[["Naomi","PG",7],["Stevie","PG",15]]],["2026-01-16",[["Eberley","WK",8],["Helena","WK",9]]],["2026-01-19",[["Eberley","WK",3],["Nate","WK",8]]],["2026-01-20",[["Jonny","DC",17]]],["2026-01-20",[["Naomi","PG",7],["Stevie","PG",1]]],["2026-01-20",[["Eberley","WK",3],["Kirsten","WK",1],["Nate","WK",9]]],["2026-01-21",[["Jonny","DC",14]]],["2026-01-21",[["Eberley","WK",5],["Nate","WK",8]]],["2026-01-22",[["Jonny","DC",13]]],["2026-01-22",[["Stevie","PG",6]]],["2026-01-22",[["Eberley","WK",7],["Kirsten","WK",6]]],["2026-01-23",[["Jonny","DC",18]]],["2026-01-23",[["Eberley","WK",5],["Nate","WK",12]]],["2026-01-26",[["Jonny","DC",13]]],["2026-01-26",[["Naomi","PG",4],["Stevie","PG",6]]],["2026-01-26",[["Kirsten","WK",1],["Nate","WK",9]]],["2026-01-27",[["Jonny","DC",11],["Julia","DC",4]]],["2026-01-27",[["Naomi","PG",4],["Stevie","PG",6]]],["2026-01-27",[["Eberley","WK",4],["Nate","WK",9]]],["2026-01-28",[["Jonny","DC",12],["Julia","DC",6]]],["2026-01-28",[["Naomi","PG",7],["Stevie","PG",11]]],["2026-01-28",[["Eberley","WK",2],["Nate","WK",12]]],["2026-01-29",[["Jonny","DC",21]]],["2026-01-30",[["Jonny","DC",20],["Julia","DC",4]]],["2026-02-02",[["Jonny","DC",17]]],["2026-02-03",[["Jonny","DC",8],["Julia","DC",2]]],["2026-02-03",[["Naomi","PG",6]]],["2026-02-03",[["Stevie","PG",4]]],["2026-02-03",[["Eberley","WK",4],["Nate","WK",10]]],["2026-02-04",[["Jonny","DC",12],["Julia","DC",6]]],["2026-02-04",[["Stevie","PG",5]]],["2026-02-04",[["Eberley","WK",2],["Kirsten","WK",4],["Nate","WK",14]]],["2026-02-05",[["Naomi","PG",5],["Stevie","PG",11]]],["2026-02-05",[["Naomi","PG",6]]],["2026-02-05",[["Eberley","WK",4],["Nate","WK",13]]],["2026-02-06",[["Jonny","DC",15],["Julia","DC",2]]],["2026-02-06",[["Eberley","WK",3],["Nate","WK",8]]],["2026-02-09",[["Naomi","PG",4],["Stevie","PG",6]]],["2026-02-09",[["Eberley","WK",3],["Kirsten","WK",4],["Nate","WK",12]]],["2026-02-10",[["Jonny","DC",12]]],["2026-02-10",[["Jonny","DC",9],["Julia","DC",4]]],["2026-02-10",[["Eberley","WK",7],["Nate","WK",7]]],["2026-02-11",[["Jonny","DC",5]]],["2026-02-12",[["Eberley","WK",4],["Nate","WK",6]]],["2026-02-13",[["Jonny","DC",16]]],["2026-02-16",[["Jonny","DC",14]]],["2026-02-16",[["Eberley","WK",3],["Kirsten","WK",1],["Nate","WK",5]]],["2026-02-17",[["Jonny","DC",12],["Julia","DC",5]]],["2026-02-17",[["Naomi","PG",8],["Stevie","PG",6]]],["2026-02-17",[["Eberley","WK",7],["Nate","WK",11]]],["2026-02-18",[["Jonny","DC",20]]],["2026-02-18",[["Naomi","PG",10],["Stevie","PG",8]]],["2026-02-18",[["Eberley","WK",3],["Nate","WK",14]]],["2026-02-19",[["Jonny","DC",16],["Julia","DC",8]]],["2026-02-20",[["Jonny","DC",25]]],["2026-02-20",[["Naomi","PG",1]]],["2026-02-20",[["Eberley","WK",1],["Nate","WK",10]]],["2026-02-23",[["Naomi","PG",4],["Stevie","PG",10]]],["2026-02-23",[["Eberley","WK",2],["Nate","WK",14]]],["2026-02-24",[["Jonny","DC",22]]],["2026-02-24",[["Naomi","PG",3],["Stevie","PG",11]]],["2026-02-24",[["Helena","WK",3],["Kirsten","WK",3],["Nate","WK",8]]],["2026-02-25",[["Jonny","DC",17]]],["2026-02-26",[["Naomi","DC",3],["Stevie","DC",8]]],["2026-03-02",[["Naomi","PG",8]]],["2026-03-03",[["Naomi","PG",13],["Stevie","PG",9]]],["2026-03-04",[["Naomi","PG",10],["Stevie","PG",7]]],["2026-03-05",[["Jonny","DC",21]]],["2026-03-05",[["Naomi","PG",9],["Stevie","PG",14]]],["2026-03-06",[["Jonny","DC",27],["Julia","DC",3]]],["2026-03-13",[["Jonny","DC",21],["Naomi","PG",3],["Nate","WK",3]]],["2026-03-16",[["Jonny","DC",20]]],["2026-03-23",[["Jonny","DC",14]]],["2026-03-23",[["Helena","WK",3],["Kirsten","WK",4],["Nate","WK",9]]],["2026-03-24",[["Eberley","WK",5],["Nate","WK",7]]],["2026-03-25",[["Jonny","DC",31]]],["2026-03-25",[["Naomi","PG",10],["Stevie","PG",9]]],["2026-03-25",[["Eberley","WK",6],["Helena","WK",3],["Nate","WK",11]]],["2026-03-26",[["Jonny","DC",26]]],["2026-03-27",[["Jonny","DC",22]]],["2026-03-27",[["Naomi","PG",8],["Stevie","PG",16]]],["2026-03-30",[["Eberley","WK",5],["Nate","WK",9]]],["2026-03-31",[["Jonny","DC",26]]],["2026-03-31",[["Eberley","WK",2],["Nate","WK",14]]],["2026-03-31",[["Kirsten","WK",1]]],["2026-04-01",[["Jonny","DC",19],["Julia","DC",7]]],["2026-04-01",[["Naomi","PG",7],["Stevie","PG",10]]],["2026-04-01",[["Eberley","WK",2],["Nate","WK",21]]],["2026-04-02",[["Jonny","DC",16]]],["2026-04-03",[["Jonny","DC",19]]],["2026-04-03",[["Kirsten","WK",3]]],["2026-04-06",[["Jonny","DC",23]]],["2026-04-06",[["Naomi","PG",6],["Stevie","PG",7]]],["2026-04-07",[["Jonny","DC",18]]],["2026-04-07",[["Eberley","WK",5],["Kirsten","WK",5],["Nate","WK",7]]],["2026-04-08",[["Naomi","PG",7],["Stevie","PG",8]]],["2026-04-09",[["Jonny","DC",18]]],["2026-04-10",[["Jonny","DC",20]]],["2026-04-13",[["Jonny","DC",19]]],["2026-04-13",[["Naomi","PG",2],["Stevie","PG",14]]],["2026-04-14",[["Jonny","DC",22]]],["2026-04-14",[["Naomi","PG",9],["Stevie","PG",11]]],["2026-04-15",[["Jonny","DC",14]]],["2026-04-16",[["Jonny","DC",19]]],["2026-04-20",[["Naomi","PG",10],["Stevie","PG",4]]],["2026-04-21",[["Naomi","PG",10],["Stevie","PG",5]]],["2026-04-21",[["Eberley","WK",1],["Kirsten","WK",1]]],["2026-04-22",[["Jonny","DC",21]]],["2026-04-22",[["Naomi","PG",10],["Stevie","PG",12]]],["2026-04-22",[["Eberley","WK",5],["Nate","WK",6]]],["2026-04-23",[["Jonny","DC",4]]],["2026-04-27",[["Jonny","DC",24]]],["2026-04-27",[["Eberley","WK",5],["Nate","WK",12]]],["2026-04-30",[["Jonny","DC",20]]],["2026-05-05",[["Naomi","PG",8],["Stevie","PG",9]]],["2026-05-05",[["Eberley","WK",2],["Nate","WK",12]]],["2026-05-06",[["Jonny","DC",23]]],["2026-05-06",[["Naomi","PG",10],["Stevie","PG",9]]],["2026-05-06",[["Eberley","WK",2],["Nate","WK",12]]],["2026-05-07",[["Jonny","DC",22]]],["2026-05-11",[["Naomi","PG",4],["Stevie","PG",13]]],["2026-05-11",[["Eberley","WK",8],["Kirsten","WK",1],["Nate","WK",10]]],["2026-05-12",[["Jonny","DC",23]]],["2026-05-12",[["Naomi","PG",5],["Stevie","PG",12]]],["2026-05-12",[["Eberley","WK",4],["Nate","WK",13]]],["2026-05-18",[["Naomi","PG",2],["Stevie","PG",8]]],["2026-05-18",[["Eberley","WK",5],["Kirsten","WK",1],["Nate","WK",13]]],["2026-05-19",[["Jonny","DC",15]]],["2026-05-19",[["Eberley","WK",6],["Nate","WK",13]]],["2026-05-20",[["Jonny","DC",6]]],["2026-05-20",[["Eberley","WK",3],["Nate","WK",16]]],["2026-05-21",[["Dad","DC",2],["Jonny","DC",15],["Julia","DC",6],["Mom","DC",2]]],["2026-05-21",[["Naomi","PG",6],["Stevie","PG",13]]],["2026-05-21",[["Eberley","WK",3],["Nate","WK",15]]],["2026-05-22",[["Eberley","WK",1],["Nate","WK",9]]],["2026-05-25",[["Jonny","DC",22]]],["2026-05-25",[["Eberley","WK",4],["Nate","WK",11]]]],"s":"2026-01-01"};
 const {useState,useMemo,useRef,useEffect} = React;
 
 /* ============ MODEL ============ */
+/* Pure-hindsight scoring. Everything is recomputed live from the FULL dataset.
+   - Family curve: fitted decay for couch sizes 1-3, raw observed average 4+.
+   - Player rating: avg of (score / curve-at-couch-size) over ALL their games.
+   - Daily score (index): actual / (rating * curve-at-couch-size) * 100.
+   No frozen results, no rolling windows: new data reshapes all of history. */
 const CURVE = APP_DATA.c;
 const SEASON_START = APP_DATA.s;
-const fc = (n)=> CURVE.a/(1+CURVE.b*(n-1));   // family decay curve
+
+// family curve value at couch size n
+function fc(n){
+  if(n<=3) return CURVE.a/(1+CURVE.b*(n-1));
+  const raw=CURVE.raw;
+  if(raw[n]!=null) return raw[n];
+  // interpolate / clamp for unseen sizes using observed 4+ points
+  const ks=Object.keys(raw).map(Number).filter(k=>k>=4).sort((a,b)=>a-b);
+  if(n<=ks[0]) return raw[ks[0]];
+  if(n>=ks[ks.length-1]) return raw[ks[ks.length-1]];
+  let lo=ks[0],hi=ks[ks.length-1];
+  for(const k of ks){ if(k<=n) lo=k; }
+  for(let i=ks.length-1;i>=0;i--){ if(ks[i]>=n) hi=ks[i]; }
+  if(lo===hi) return raw[lo];
+  const f=(n-lo)/(hi-lo);
+  return raw[lo]+f*(raw[hi]-raw[lo]);
+}
 
 // build couch list from compact data
 const COUCHES = APP_DATA.g.map((row,i)=>({
@@ -230,40 +278,49 @@ const PLAYER_CITY={Jonny:'DC',Julia:'DC',Mom:'DC',Dad:'DC',Carmen:'DC',Beckett:'
   Naomi:'PG',Stevie:'PG',Nate:'WK',Eberley:'WK',Kirsten:'WK',Helena:'WK',Kevin:'WK'};
 const ALL_PLAYERS=['Jonny','Nate','Stevie','Naomi','Eberley','Kirsten','Julia',
   'Helena','Mom','Dad','Carmen','Beckett','Kevin'];
-const MIN_GAMES=5;
+const MIN_GAMES=5;   // below this, a player's rating is flagged "new"
 
-function daysBetween(a,b){return (new Date(b)-new Date(a))/86400000;}
-
-// rolling-365-day multiplier for a player as of a date
-function multiplier(player,asof,couches){
-  const ratios=[];
-  for(const c of couches){
-    if(c.date>=asof) continue;
-    if(daysBetween(c.date,asof)>365) continue;
+// player rating = avg of (score / curve) over ALL their games in the dataset.
+// computed once over the whole COUCHES list (pure hindsight).
+const RATINGS = (function(){
+  const acc={};
+  for(const c of COUCHES){
     for(const p of c.players){
-      if(p.name===player){ const e=fc(c.size); if(e>0) ratios.push(p.score/e);}
+      const e=fc(c.size);
+      if(e<=0) continue;
+      if(!acc[p.name]) acc[p.name]={sum:0,n:0};
+      acc[p.name].sum+=p.score/e;
+      acc[p.name].n++;
     }
   }
-  if(ratios.length<MIN_GAMES) return {mult:1,games:ratios.length,provisional:true};
-  return {mult:ratios.length?ratios.reduce((a,b)=>a+b,0)/ratios.length:1,
-          games:ratios.length,provisional:false};
+  const out={};
+  for(const nm in acc) out[nm]={rating:acc[nm].sum/acc[nm].n,games:acc[nm].n};
+  return out;
+})();
+function rating(name){
+  const r=RATINGS[name];
+  if(!r) return {rating:1,games:0,provisional:true};
+  return {rating:r.rating,games:r.games,provisional:r.games<MIN_GAMES};
 }
 
-// daily index for every player-game on a given date
+// daily index for every player-game on a given date.
+// expected = player rating * family curve at that couch size.
+// index = actual / expected * 100.  Pure hindsight: rating uses all data.
 function dayResults(date,couches){
   const todays=couches.filter(c=>c.date===date);
   const out=[];
   for(const c of todays){
     for(const p of c.players){
-      const m=multiplier(p.name,date,couches);
-      const expected=m.mult*fc(c.size);
+      const r=rating(p.name);
+      const expected=r.rating*fc(c.players.length);
       const index= expected>0 ? (p.score/expected)*100 : 100;
-      out.push({name:p.name,city:p.city,score:p.score,size:c.size,
-                expected,index,provisional:m.provisional,games:m.games});
+      out.push({name:p.name,city:p.city,score:p.score,size:c.players.length,
+                expected,index,provisional:r.provisional,games:r.games});
     }
   }
   return out;
 }
+
 
 // aggregate index leaderboard over a date range
 function rangeBoard(fromDate,toDate,couches){
@@ -343,104 +400,244 @@ function CityTag({city}){
   return <span className={`citytag city-${city}`}>{city}</span>;
 }
 
-/* ============ LEADERBOARD VIEW ============ */
-function LeaderboardView(){
-  const [period,setPeriod]=useState('week');   // day week month season
-  const [mode,setMode]=useState('handicap');   // handicap (only mode now)
-  const [scope,setScope]=useState('ind');      // ind | city
+/* ============ DATE BUCKET HELPERS ============ */
+function weekKey(d){
+  const dt=new Date(d+'T00:00:00');
+  const day=(dt.getDay()+6)%7;            // Mon=0
+  dt.setDate(dt.getDate()-day);
+  return dt.toISOString().slice(0,10);
+}
+const monthKey=d=>d.slice(0,7);
+const yearKey=d=>d.slice(0,4);
 
+function periodLabel(gran,key){
+  const MO=['January','February','March','April','May','June','July',
+    'August','September','October','November','December'];
+  if(gran==='day') return fmtDate(key);
+  if(gran==='year') return key+' Season';
+  if(gran==='month'){const p=key.split('-');return MO[+p[1]-1]+' '+p[0];}
+  const start=new Date(key+'T00:00:00');
+  const end=new Date(start);end.setDate(end.getDate()+6);
+  const f=dt=>['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+    [dt.getMonth()]+' '+dt.getDate();
+  return 'Week of '+f(start)+'–'+f(end);
+}
+
+/* ============ SUMMARY (champion crown) ============ */
+function SummaryBoard(){
+  const [period,setPeriod]=useState('week');
+  const [scope,setScope]=useState('ind');
   const ranges=useMemo(()=>{
-    const end=LAST_DATE;
-    const d=new Date(end);
-    const back=(n)=>{const x=new Date(d);x.setDate(x.getDate()-n);
+    const end=LAST_DATE,d=new Date(end);
+    const back=n=>{const x=new Date(d);x.setDate(x.getDate()-n);
       return x.toISOString().slice(0,10);};
-    return {
-      day:[end,end],
-      week:[back(6),end],
-      month:[back(29),end],
-      season:[SEASON_START,end]
-    };
+    return {day:[end,end],week:[back(6),end],month:[back(29),end],
+      season:[SEASON_START,end]};
   },[]);
-
-  const [from,to]=ranges[period];
-  const board=useMemo(()=>rangeBoard(from,to,COUCHES),[from,to]);
-  const champDay=useMemo(()=>dayResults(LAST_DATE,COUCHES),[]);
-
-  // champion of the current period
-  const champ = scope==='ind'
-    ? board.indArr[0]
-    : board.cityArr[0];
-
-  const periodLabel={day:'Today',week:'This Week',month:'This Month',season:'2026 Season'}[period];
+  const r=ranges[period];
+  const board=useMemo(()=>rangeBoard(r[0],r[1],COUCHES),[r[0],r[1]]);
+  const champ=scope==='ind'?board.indArr[0]:board.cityArr[0];
+  const plbl={day:'Today',week:'This Week',month:'This Month',season:'2026 Season'}[period];
 
   return (
-    <div className="scroll fade">
+    <React.Fragment>
       <div className="pad">
         <div className="seg">
           {['day','week','month','season'].map(p=>(
-            <button key={p} className={period===p?'on':''}
-              onClick={()=>setPeriod(p)}>{
-              {day:'Day',week:'Week',month:'Month',season:'Season'}[p]}</button>
-          ))}
+            <button key={p} className={period===p?'on':''} onClick={()=>setPeriod(p)}>
+              {{day:'Day',week:'Week',month:'Month',season:'Season'}[p]}</button>))}
         </div>
         <div className="seg" style={{marginTop:6}}>
           <button className={scope==='ind'?'on':''} onClick={()=>setScope('ind')}>Players</button>
           <button className={scope==='city'?'on':''} onClick={()=>setScope('city')}>Cities</button>
         </div>
       </div>
-
-      {/* champion crown */}
       {champ &&
         <div className="pad">
           <div className="champ">
             <div className="crown">👑</div>
-            <div className="lbl">{periodLabel} · {scope==='ind'?'Top Player':'Top City'}</div>
+            <div className="lbl">{plbl} · {scope==='ind'?'Top Player':'Top City'}</div>
             <div className="who">{scope==='ind'?champ.name:CITY_NAMES[champ.city]}</div>
-            <div className="idx">Performance Index&nbsp;
-              {Math.round(scope==='ind'?champ.avg:champ.avg)}</div>
+            <div className="idx">Performance Index {Math.round(champ.avg)}</div>
           </div>
         </div>}
-
       <div className="pad">
-        <div className="section-title">
-          {scope==='ind'?'Player Standings':'City Standings'} — {periodLabel}
-        </div>
+        <div className="section-title">{scope==='ind'?'Player':'City'} Standings — {plbl}</div>
         <div className="card" style={{padding:'4px 2px'}}>
           {scope==='ind'
             ? board.indArr.map((p,i)=>(
-                <div className="lb-row" key={p.name}>
-                  <div className={`rank r${i+1}`}>{i+1}</div>
-                  <Avatar name={p.name}/>
-                  <div className="lb-name">
-                    <div className="nm">{p.name} {p.provisional &&
-                      <span className="prov">new</span>}</div>
-                    <div className="sub">{p.games} {p.games===1?'day':'days'} ·
-                      &nbsp;<CityTag city={PLAYER_CITY[p.name]}/></div>
-                  </div>
-                  <div className="lb-score">{Math.round(p.avg)}
-                    <span className="u"> idx</span></div>
-                </div>))
+              <div className="lb-row" key={p.name}>
+                <div className={'rank r'+(i+1)}>{i+1}</div>
+                <Avatar name={p.name}/>
+                <div className="lb-name">
+                  <div className="nm">{p.name} {p.provisional&&<span className="prov">new</span>}</div>
+                  <div className="sub">{p.games} {p.games===1?'day':'days'} ·&nbsp;
+                    <CityTag city={PLAYER_CITY[p.name]}/></div>
+                </div>
+                <div className="lb-score">{Math.round(p.avg)}<span className="u"> idx</span></div>
+              </div>))
             : board.cityArr.map((c,i)=>(
-                <div className="lb-row" key={c.city}>
-                  <div className={`rank r${i+1}`}>{i+1}</div>
-                  <div className={`avatar city-${c.city}`}>{c.city}</div>
-                  <div className="lb-name">
-                    <div className="nm">{CITY_NAMES[c.city]}</div>
-                    <div className="sub">{c.days} days scored</div>
-                  </div>
-                  <div className="lb-score">{Math.round(c.avg)}
-                    <span className="u"> idx</span></div>
-                </div>))}
-          {scope==='ind' && board.indArr.length===0 &&
+              <div className="lb-row" key={c.city}>
+                <div className={'rank r'+(i+1)}>{i+1}</div>
+                <div className={'avatar city-'+c.city}>{c.city}</div>
+                <div className="lb-name">
+                  <div className="nm">{CITY_NAMES[c.city]}</div>
+                  <div className="sub">{c.days} days scored</div>
+                </div>
+                <div className="lb-score">{Math.round(c.avg)}<span className="u"> idx</span></div>
+              </div>))}
+          {scope==='ind'&&board.indArr.length===0&&
             <div className="empty">No games in this period yet.</div>}
         </div>
+      </div>
+    </React.Fragment>
+  );
+}
 
-        <div className="hint">
-          Performance Index = your score vs. what's expected of you, given couch
-          size & your recent form. 100 = exactly on form. Higher = you beat
-          expectations.
+/* ============ ARCHIVE (scrollable history) ============ */
+function ArchiveBoard(){
+  const [gran,setGran]=useState('day');
+  const [scope,setScope]=useState('ind');
+  const [open,setOpen]=useState(null);
+
+  const periods=useMemo(()=>{
+    const keyFn={day:d=>d,week:weekKey,month:monthKey,year:yearKey}[gran];
+    const dates=[...new Set(COUCHES.map(c=>c.date))]
+      .filter(d=>d>=SEASON_START).sort();
+    const buckets={};
+    for(const d of dates){
+      const k=keyFn(d);
+      (buckets[k]=buckets[k]||[]).push(d);
+    }
+    return Object.entries(buckets).sort((a,b)=>b[0].localeCompare(a[0]))
+      .map(function(entry){
+        const k=entry[0],ds=entry[1];
+        const indAgg={},cityAgg={};
+        for(const d of ds){
+          const res=dayResults(d,COUCHES);
+          for(const rr of res){
+            if(!indAgg[rr.name]) indAgg[rr.name]={sum:0,n:0,prov:rr.provisional};
+            indAgg[rr.name].sum+=rr.index;indAgg[rr.name].n++;
+            indAgg[rr.name].prov=rr.provisional;
+          }
+          const byC={};
+          res.forEach(rr=>{(byC[rr.city]=byC[rr.city]||[]).push(rr.index);});
+          for(const c in byC){
+            const a=byC[c].reduce((x,y)=>x+y,0)/byC[c].length;
+            if(!cityAgg[c]) cityAgg[c]={sum:0,n:0};
+            cityAgg[c].sum+=a;cityAgg[c].n++;
+          }
+        }
+        const indRank=Object.entries(indAgg).map(function(e){
+          return {name:e[0],avg:e[1].sum/e[1].n,games:e[1].n,prov:e[1].prov};})
+          .sort((a,b)=>b.avg-a.avg);
+        const cityRank=Object.entries(cityAgg).map(function(e){
+          return {city:e[0],avg:e[1].sum/e[1].n};})
+          .sort((a,b)=>b.avg-a.avg);
+        return {key:k,dates:ds,indRank:indRank,cityRank:cityRank};
+      });
+  },[gran]);
+
+  return (
+    <React.Fragment>
+      <div className="pad">
+        <div className="seg">
+          {['day','week','month','year'].map(g=>(
+            <button key={g} className={gran===g?'on':''}
+              onClick={()=>{setGran(g);setOpen(null);}}>
+              {{day:'Day',week:'Week',month:'Month',year:'Year'}[g]}</button>))}
+        </div>
+        <div className="seg" style={{marginTop:6}}>
+          <button className={scope==='ind'?'on':''} onClick={()=>setScope('ind')}>Players</button>
+          <button className={scope==='city'?'on':''} onClick={()=>setScope('city')}>Cities</button>
         </div>
       </div>
+      <div className="pad">
+        <div className="section-title">
+          {scope==='ind'?'Player':'City'} History — by {gran}
+        </div>
+        <div className="card" style={{padding:'2px'}}>
+          {periods.map(function(p){
+            const rank=scope==='ind'?p.indRank:p.cityRank;
+            const win=rank[0];
+            const isOpen=open===p.key;
+            return (
+              <div key={p.key}>
+                <div className="lb-row" style={{cursor:'pointer'}}
+                  onClick={()=>setOpen(isOpen?null:p.key)}>
+                  <div className="arch-date">{periodLabel(gran,p.key)}</div>
+                  {win &&
+                    <React.Fragment>
+                      <span className="crown-sm">🏆</span>
+                      {scope==='ind'
+                        ? <Avatar name={win.name} size={28}/>
+                        : <div className={'avatar city-'+win.city}
+                            style={{width:28,height:28,fontSize:11}}>{win.city}</div>}
+                      <div className="lb-name">
+                        <div className="nm" style={{fontSize:14}}>
+                          {scope==='ind'?win.name:CITY_NAMES[win.city]}</div>
+                        {scope==='ind' &&
+                          <div className="sub"><CityTag city={PLAYER_CITY[win.name]}/></div>}
+                      </div>
+                      <div className="lb-score" style={{fontSize:18}}>
+                        {Math.round(win.avg)}<span className="u"> idx</span></div>
+                    </React.Fragment>}
+                  <div className={'chev '+(isOpen?'up':'')}>▾</div>
+                </div>
+                {isOpen &&
+                  <div className="arch-detail">
+                    {gran==='day' && scope==='ind'
+                      ? dayResults(p.key,COUCHES).sort((a,b)=>b.index-a.index)
+                          .map(function(rr,i){return (
+                          <div className="detail-row" key={rr.name+i}>
+                            <span className="dr-rank">{i+1}</span>
+                            <Avatar name={rr.name} size={24}/>
+                            <span className="dr-name">{rr.name}</span>
+                            <span className="dr-sub">{rr.score} pts · exp {rr.expected.toFixed(1)}</span>
+                            <span className="dr-idx">{Math.round(rr.index)}</span>
+                          </div>);})
+                      : rank.map(function(rr,i){return (
+                          <div className="detail-row" key={(rr.name||rr.city)+i}>
+                            <span className="dr-rank">{i+1}</span>
+                            {scope==='ind'
+                              ? <Avatar name={rr.name} size={24}/>
+                              : <div className={'avatar city-'+rr.city}
+                                  style={{width:24,height:24,fontSize:9}}>{rr.city}</div>}
+                            <span className="dr-name">
+                              {scope==='ind'?rr.name:CITY_NAMES[rr.city]}</span>
+                            <span className="dr-sub">avg index</span>
+                            <span className="dr-idx">{Math.round(rr.avg)}</span>
+                          </div>);})}
+                  </div>}
+              </div>
+            );
+          })}
+          {periods.length===0 &&
+            <div className="empty">No games recorded yet this season.</div>}
+        </div>
+        <div className="hint">
+          Tap any {gran} to see the full ranking. Index = score vs. expectation;
+          higher means a bigger over-performance.
+        </div>
+      </div>
+    </React.Fragment>
+  );
+}
+
+/* ============ LEADERBOARD VIEW (Summary | Archive) ============ */
+function LeaderboardView(){
+  const [mode,setMode]=useState('summary');
+  return (
+    <div className="scroll fade">
+      <div className="pad" style={{paddingBottom:0}}>
+        <div className="seg mode-seg">
+          <button className={mode==='summary'?'on':''}
+            onClick={()=>setMode('summary')}>Summary</button>
+          <button className={mode==='archive'?'on':''}
+            onClick={()=>setMode('archive')}>Archive</button>
+        </div>
+      </div>
+      {mode==='summary'?<SummaryBoard/>:<ArchiveBoard/>}
     </div>
   );
 }
