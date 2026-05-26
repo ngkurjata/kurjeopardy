@@ -1,0 +1,725 @@
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+<title>Kurjeopardy</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Anton&family=Libre+Franklin:wght@400;500;600&display=swap');
+
+  :root{
+    --jeop-blue:#060ce9;
+    --jeop-deep:#070b87;
+    --jeop-dark:#040627;
+    --jeop-darker:#02031a;
+    --gold:#d4a017;
+    --gold-bright:#ffcc33;
+    --gold-soft:#e8c468;
+    --ink:#f4f1e8;
+    --panel:#0b1150;
+    --panel-lit:#141c6e;
+    --line:rgba(212,160,23,.28);
+    --green:#3fae6a;
+    --red:#d9504a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    background:var(--jeop-darker);
+    font-family:'Libre Franklin',sans-serif;
+    color:var(--ink);
+    overflow:hidden;
+  }
+  #root{height:100vh;height:100dvh;display:flex;flex-direction:column;max-width:520px;margin:0 auto;
+    background:
+      radial-gradient(120% 60% at 50% 0%, #0a1170 0%, transparent 70%),
+      linear-gradient(180deg,#050838 0%,#030420 60%,#02031a 100%);
+    position:relative;}
+  /* subtle grain */
+  #root::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.04;z-index:0;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");}
+
+  .scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;position:relative;z-index:1;padding-bottom:24px;}
+
+  /* ---------- header ---------- */
+  header{padding:18px 18px 14px;text-align:center;position:relative;z-index:2;
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,rgba(6,12,233,.22),transparent);}
+  .wordmark{font-family:'Anton',sans-serif;letter-spacing:.5px;line-height:.9;
+    font-size:clamp(30px,9vw,42px);text-transform:uppercase;}
+  .wordmark .kur{color:var(--gold-bright);}
+  .wordmark .jeop{color:#fff;text-shadow:2px 3px 0 #000,0 0 22px rgba(96,120,255,.5);}
+  .tagline{font-family:'Oswald',sans-serif;font-weight:500;letter-spacing:3px;
+    font-size:10px;color:var(--gold-soft);text-transform:uppercase;margin-top:5px;opacity:.85;}
+
+  /* ---------- nav ---------- */
+  nav{display:flex;border-top:1px solid var(--line);background:var(--jeop-darker);
+    position:relative;z-index:3;}
+  nav button{flex:1;background:none;border:none;padding:9px 2px 8px;cursor:pointer;
+    font-family:'Oswald',sans-serif;font-weight:600;font-size:10px;letter-spacing:1px;
+    text-transform:uppercase;color:#6b73b8;display:flex;flex-direction:column;
+    align-items:center;gap:3px;transition:color .15s;}
+  nav button svg{width:21px;height:21px;}
+  nav button.on{color:var(--gold-bright);}
+  nav button.on .ico{filter:drop-shadow(0 0 6px rgba(255,204,51,.6));}
+
+  /* ---------- generic ---------- */
+  .pad{padding:16px 16px 0;}
+  .section-title{font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:2px;
+    text-transform:uppercase;font-size:13px;color:var(--gold-soft);margin:20px 4px 10px;
+    display:flex;align-items:center;gap:8px;}
+  .section-title::before{content:"";width:14px;height:2px;background:var(--gold);}
+
+  .card{background:linear-gradient(160deg,var(--panel),var(--jeop-deep));
+    border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;
+    box-shadow:0 8px 22px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.05);}
+
+  /* ---------- segmented control ---------- */
+  .seg{display:flex;background:var(--jeop-darker);border:1px solid var(--line);
+    border-radius:11px;padding:3px;gap:3px;margin:4px;}
+  .seg button{flex:1;background:none;border:none;border-radius:8px;padding:8px 4px;
+    font-family:'Oswald',sans-serif;font-weight:600;font-size:11px;letter-spacing:.6px;
+    text-transform:uppercase;color:#7a82c4;cursor:pointer;transition:.15s;}
+  .seg button.on{background:linear-gradient(180deg,var(--jeop-blue),var(--jeop-deep));
+    color:var(--gold-bright);box-shadow:0 2px 8px rgba(6,12,233,.6);}
+
+  /* ---------- leaderboard rows ---------- */
+  .lb-row{display:flex;align-items:center;gap:12px;padding:11px 12px;
+    border-bottom:1px solid rgba(212,160,23,.12);}
+  .lb-row:last-child{border-bottom:none;}
+  .rank{font-family:'Anton',sans-serif;font-size:19px;width:26px;text-align:center;
+    color:#5b63a8;flex-shrink:0;}
+  .rank.r1{color:var(--gold-bright);text-shadow:0 0 12px rgba(255,204,51,.7);}
+  .rank.r2{color:#cdd2f0;}
+  .rank.r3{color:#c8915a;}
+  .avatar{width:38px;height:38px;border-radius:50%;flex-shrink:0;display:flex;
+    align-items:center;justify-content:center;font-family:'Anton',sans-serif;
+    font-size:16px;color:#fff;border:2px solid rgba(255,255,255,.18);}
+  .lb-name{flex:1;min-width:0;}
+  .lb-name .nm{font-family:'Oswald',sans-serif;font-weight:600;font-size:15px;letter-spacing:.4px;}
+  .lb-name .sub{font-size:10.5px;color:#8088c8;margin-top:1px;}
+  .lb-score{font-family:'Anton',sans-serif;font-size:22px;color:var(--gold-bright);
+    flex-shrink:0;line-height:1;}
+  .lb-score .u{font-size:10px;color:#8088c8;font-family:'Oswald',sans-serif;}
+  .prov{font-size:9px;letter-spacing:.5px;color:#7a82c4;border:1px solid var(--line);
+    border-radius:5px;padding:2px 5px;text-transform:uppercase;font-family:'Oswald',sans-serif;}
+
+  /* city pills */
+  .city-DC{background:linear-gradient(135deg,#c0392b,#7d2018);}
+  .city-PG{background:linear-gradient(135deg,#27ae60,#176b3a);}
+  .city-WK{background:linear-gradient(135deg,#2980b9,#174f73);}
+  .citytag{font-family:'Oswald',sans-serif;font-weight:700;font-size:9px;
+    padding:2px 6px;border-radius:5px;letter-spacing:.5px;color:#fff;}
+
+  /* ---------- crown / today ---------- */
+  .champ{background:
+      radial-gradient(120% 100% at 50% 0%,rgba(255,204,51,.22),transparent 70%),
+      linear-gradient(160deg,var(--panel-lit),var(--jeop-deep));
+    border:1.5px solid var(--gold);border-radius:16px;padding:18px 14px;text-align:center;
+    margin-bottom:14px;box-shadow:0 10px 30px rgba(0,0,0,.5);}
+  .champ .crown{font-size:30px;margin-bottom:2px;}
+  .champ .lbl{font-family:'Oswald',sans-serif;letter-spacing:2px;font-size:10px;
+    text-transform:uppercase;color:var(--gold-soft);}
+  .champ .who{font-family:'Anton',sans-serif;font-size:34px;color:#fff;
+    text-shadow:0 0 20px rgba(255,204,51,.5);margin:3px 0;}
+  .champ .idx{font-family:'Oswald',sans-serif;font-weight:600;color:var(--gold-bright);font-size:14px;}
+
+  /* ---------- score entry ---------- */
+  .field-label{font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:1px;
+    font-size:11px;text-transform:uppercase;color:var(--gold-soft);margin:14px 4px 7px;}
+  .player-pick{display:flex;flex-wrap:wrap;gap:7px;}
+  .pp{font-family:'Oswald',sans-serif;font-weight:600;font-size:13px;
+    padding:8px 13px;border-radius:9px;border:1.5px solid var(--line);
+    background:var(--jeop-darker);color:#9aa1d8;cursor:pointer;transition:.12s;}
+  .pp.sel{background:linear-gradient(180deg,var(--jeop-blue),var(--jeop-deep));
+    color:var(--gold-bright);border-color:var(--gold);}
+  .score-row{display:flex;align-items:center;gap:10px;margin-bottom:9px;
+    background:var(--jeop-darker);border:1px solid var(--line);border-radius:11px;
+    padding:9px 11px;}
+  .score-row .nm{flex:1;font-family:'Oswald',sans-serif;font-weight:600;font-size:15px;}
+  .stepper{display:flex;align-items:center;gap:0;}
+  .stepper button{width:34px;height:34px;border:1px solid var(--line);
+    background:var(--panel);color:var(--gold-bright);font-size:20px;font-family:'Anton',sans-serif;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .stepper button:first-child{border-radius:8px 0 0 8px;}
+  .stepper button:last-child{border-radius:0 8px 8px 0;}
+  .stepper .val{width:46px;height:34px;border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);background:var(--jeop-darker);
+    font-family:'Anton',sans-serif;font-size:18px;color:#fff;text-align:center;
+    display:flex;align-items:center;justify-content:center;}
+  .big-btn{width:100%;padding:15px;border:none;border-radius:12px;cursor:pointer;
+    font-family:'Anton',sans-serif;font-size:18px;letter-spacing:1px;text-transform:uppercase;
+    background:linear-gradient(180deg,var(--gold-bright),var(--gold));color:#1a1200;
+    box-shadow:0 6px 18px rgba(212,160,23,.4);margin-top:16px;}
+  .big-btn:active{transform:translateY(1px);}
+  .big-btn:disabled{opacity:.4;}
+  .hint{font-size:11.5px;color:#8088c8;text-align:center;margin-top:9px;line-height:1.5;}
+  .total-chip{text-align:center;font-family:'Oswald',sans-serif;font-weight:600;
+    font-size:12px;color:var(--gold-soft);margin-top:6px;}
+  .total-chip.bad{color:var(--red);}
+  .date-in{background:var(--jeop-darker);border:1.5px solid var(--line);border-radius:9px;
+    color:var(--ink);font-family:'Oswald',sans-serif;font-size:14px;padding:9px 11px;width:100%;}
+
+  /* couch group divider in entry */
+  .couch-box{border:1px dashed var(--line);border-radius:11px;padding:10px;margin-top:8px;}
+
+  /* ---------- chat ---------- */
+  .chat-wrap{display:flex;flex-direction:column;height:100%;}
+  .chat-scroll{flex:1;overflow-y:auto;padding:14px 12px;display:flex;
+    flex-direction:column;gap:9px;}
+  .msg{max-width:78%;padding:8px 12px;border-radius:14px;font-size:14px;line-height:1.4;}
+  .msg .who{font-family:'Oswald',sans-serif;font-weight:700;font-size:10px;
+    letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px;opacity:.85;}
+  .msg.them{align-self:flex-start;background:var(--panel);border:1px solid var(--line);
+    border-bottom-left-radius:4px;}
+  .msg.me{align-self:flex-end;background:linear-gradient(160deg,var(--jeop-blue),var(--jeop-deep));
+    border-bottom-right-radius:4px;}
+  .msg img{border-radius:9px;max-width:100%;display:block;margin-top:3px;}
+  .chat-input{display:flex;gap:7px;padding:9px 10px;border-top:1px solid var(--line);
+    background:var(--jeop-darker);}
+  .chat-input input{flex:1;background:var(--panel);border:1px solid var(--line);
+    border-radius:20px;padding:10px 14px;color:var(--ink);font-size:14px;font-family:'Libre Franklin';}
+  .chat-input button{border:none;border-radius:50%;width:40px;height:40px;flex-shrink:0;
+    background:linear-gradient(180deg,var(--gold-bright),var(--gold));color:#1a1200;
+    font-size:18px;cursor:pointer;}
+  .gif-btn{background:var(--panel)!important;border:1px solid var(--line)!important;
+    color:var(--gold-bright)!important;font-family:'Anton';font-size:12px!important;}
+  .gif-tray{display:flex;gap:6px;overflow-x:auto;padding:8px 10px;background:var(--jeop-darker);
+    border-top:1px solid var(--line);}
+  .gif-tray img{height:62px;border-radius:7px;cursor:pointer;flex-shrink:0;}
+
+  /* stat grid */
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+  .stat{background:var(--jeop-darker);border:1px solid var(--line);border-radius:11px;
+    padding:11px;text-align:center;}
+  .stat .v{font-family:'Anton',sans-serif;font-size:26px;color:var(--gold-bright);}
+  .stat .l{font-family:'Oswald',sans-serif;font-size:9.5px;letter-spacing:.8px;
+    text-transform:uppercase;color:#8088c8;margin-top:2px;}
+
+  .toast{position:absolute;bottom:78px;left:50%;transform:translateX(-50%);
+    background:var(--green);color:#fff;font-family:'Oswald',sans-serif;font-weight:600;
+    padding:11px 20px;border-radius:24px;font-size:13px;z-index:50;
+    box-shadow:0 8px 24px rgba(0,0,0,.5);animation:pop .3s;}
+  @keyframes pop{from{opacity:0;transform:translate(-50%,12px);}}
+  @keyframes fadein{from{opacity:0;transform:translateY(8px);}}
+  .fade{animation:fadein .35s both;}
+
+  .empty{text-align:center;color:#8088c8;font-size:13px;padding:30px 20px;line-height:1.6;}
+  .mini-bar{height:6px;border-radius:3px;background:var(--jeop-darker);overflow:hidden;margin-top:5px;}
+  .mini-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-bright));}
+</style>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const APP_DATA = {"c":{"a":16.683501766617198,"b":0.9265518973537842},"g":[["2025-09-18",[["Jonny","DC",13]]],["2025-09-18",[["Naomi","PG",10],["Stevie","PG",8]]],["2025-09-18",[["Eberley","WK",8],["Nate","WK",9]]],["2025-09-19",[["Naomi","PG",9],["Stevie","PG",8]]],["2025-09-19",[["Eberley","WK",1],["Kirsten","WK",1],["Nate","WK",5]]],["2025-09-22",[["Jonny","DC",22]]],["2025-09-22",[["Naomi","PG",12],["Stevie","PG",6]]],["2025-09-22",[["Eberley","WK",5],["Nate","WK",10]]],["2025-09-23",[["Jonny","DC",14]]],["2025-09-23",[["Naomi","PG",10],["Stevie","PG",3]]],["2025-09-23",[["Eberley","WK",7],["Nate","WK",8]]],["2025-09-24",[["Jonny","DC",16]]],["2025-09-24",[["Naomi","PG",10]]],["2025-09-24",[["Nate","WK",10]]],["2025-09-25",[["Jonny","DC",14]]],["2025-09-25",[["Naomi","PG",10],["Stevie","PG",10]]],["2025-09-25",[["Eberley","WK",2],["Kirsten","WK",4],["Nate","WK",8]]],["2025-09-26",[["Jonny","DC",18]]],["2025-09-26",[["Naomi","PG",12],["Stevie","PG",13]]],["2025-09-26",[["Eberley","WK",3],["Kirsten","WK",1],["Nate","WK",6]]],["2025-09-29",[["Jonny","DC",20]]],["2025-09-29",[["Naomi","PG",11],["Stevie","PG",12]]],["2025-09-29",[["Eberley","WK",3],["Nate","WK",13]]],["2025-09-30",[["Jonny","DC",22]]],["2025-09-30",[["Naomi","PG",10]]],["2025-09-30",[["Eberley","WK",3],["Nate","WK",16]]],["2025-10-01",[["Jonny","DC",17]]],["2025-10-01",[["Naomi","PG",14]]],["2025-10-01",[["Eberley","WK",7],["Kirsten","WK",1],["Nate","WK",9]]],["2025-10-02",[["Jonny","DC",13]]],["2025-10-02",[["Naomi","PG",4],["Stevie","PG",7]]],["2025-10-02",[["Eberley","WK",5],["Nate","WK",4]]],["2025-10-03",[["Jonny","PG",11],["Naomi","PG",7],["Stevie","PG",9]]],["2025-10-06",[["Jonny","DC",19]]],["2025-10-06",[["Naomi","PG",4],["Stevie","PG",14]]],["2025-10-06",[["Eberley","WK",2],["Nate","WK",18]]],["2025-10-07",[["Jonny","DC",13]]],["2025-10-07",[["Naomi","PG",9],["Stevie","PG",8]]],["2025-10-07",[["Eberley","WK",7],["Kirsten","WK",4],["Nate","WK",8]]],["2025-10-08",[["Jonny","DC",22]]],["2025-10-08",[["Naomi","PG",11],["Stevie","PG",9]]],["2025-10-08",[["Eberley","WK",7],["Nate","WK",19]]],["2025-10-09",[["Jonny","DC",11]]],["2025-10-09",[["Naomi","PG",3],["Stevie","PG",12]]],["2025-10-09",[["Eberley","WK",2],["Kirsten","WK",5],["Nate","WK",5]]],["2025-10-10",[["Jonny","DC",12]]],["2025-10-10",[["Carmen","PG",1],["Eberley","PG",2],["Helena","PG",1],["Kevin","PG",6],["Kirsten","PG",4],["Mom","PG",1],["Naomi","PG",5],["Nate","PG",6],["Stevie","PG",10]]],["2025-10-13",[["Jonny","DC",18]]],["2025-10-13",[["Naomi","PG",8],["Stevie","PG",7]]],["2025-10-13",[["Eberley","WK",3],["Nate","WK",11]]],["2025-10-14",[["Jonny","DC",27]]],["2025-10-14",[["Naomi","PG",15],["Stevie","PG",13]]],["2025-10-14",[["Eberley","WK",6],["Kirsten","WK",2],["Nate","WK",14]]],["2025-10-15",[["Jonny","DC",14]]],["2025-10-15",[["Naomi","PG",6],["Stevie","PG",6]]],["2025-10-15",[["Eberley","WK",2],["Nate","WK",6]]],["2025-10-16",[["Jonny","DC",18]]],["2025-10-16",[["Naomi","PG",8],["Stevie","PG",14]]],["2025-10-16",[["Eberley","WK",3],["Nate","WK",7]]],["2025-10-17",[["Jonny","DC",17]]],["2025-10-17",[["Naomi","PG",9],["Stevie","PG",9]]],["2025-10-17",[["Eberley","WK",4],["Kirsten","WK",3],["Nate","WK",10]]],["2025-10-20",[["Naomi","PG",8],["Stevie","PG",8]]],["2025-10-21",[["Jonny","DC",12]]],["2025-10-21",[["Naomi","PG",7],["Stevie","PG",9]]],["2025-10-21",[["Eberley","WK",8],["Kirsten","WK",8],["Nate","WK",1]]],["2025-10-22",[["Jonny","DC",11]]],["2025-10-22",[["Naomi","PG",11],["Stevie","PG",8]]],["2025-10-22",[["Eberley","WK",5],["Nate","WK",7]]],["2025-10-23",[["Jonny","DC",17]]],["2025-10-23",[["Naomi","PG",6],["Stevie","PG",12]]],["2025-10-23",[["Eberley","WK",6],["Nate","WK",14]]],["2025-10-24",[["Jonny","DC",15]]],["2025-10-24",[["Naomi","PG",14],["Stevie","PG",14]]],["2025-10-24",[["Eberley","WK",7],["Kirsten","WK",4],["Nate","WK",9]]],["2025-10-28",[["Jonny","DC",12]]],["2025-10-28",[["Naomi","PG",5],["Stevie","PG",10]]],["2025-10-28",[["Eberley","WK",5],["Nate","WK",7]]],["2025-10-29",[["Jonny","DC",23]]],["2025-10-29",[["Eberley","WK",3],["Nate","WK",12]]],["2025-10-30",[["Naomi","PG",6],["Stevie","PG",8]]],["2025-10-30",[["Eberley","WK",2],["Kirsten","WK",2],["Nate","WK",16]]],["2025-10-31",[["Naomi","PG",8],["Stevie","PG",13]]],["2025-10-31",[["Eberley","WK",7],["Kirsten","WK",1],["Nate","WK",8]]],["2025-11-03",[["Jonny","DC",21]]],["2025-11-03",[["Naomi","PG",8],["Stevie","PG",9]]],["2025-11-03",[["Eberley","WK",8],["Nate","WK",18]]],["2025-11-04",[["Jonny","DC",16]]],["2025-11-04",[["Naomi","PG",11],["Stevie","PG",13]]],["2025-11-04",[["Eberley","WK",4],["Kirsten","WK",9],["Nate","WK",10]]],["2025-11-05",[["Jonny","DC",16]]],["2025-11-05",[["Naomi","PG",8],["Stevie","PG",17]]],["2025-11-05",[["Eberley","WK",2],["Nate","WK",15]]],["2025-11-06",[["Jonny","DC",20]]],["2025-11-07",[["Jonny","DC",23]]],["2025-11-07",[["Naomi","PG",6],["Stevie","PG",10]]],["2025-11-07",[["Eberley","WK",7],["Nate","WK",15]]],["2025-11-10",[["Jonny","DC",18]]],["2025-11-10",[["Naomi","PG",7],["Stevie","PG",9]]],["2025-11-11",[["Jonny","DC",19]]],["2025-11-11",[["Naomi","PG",17],["Stevie","PG",8]]],["2025-11-11",[["Eberley","WK",11],["Kirsten","WK",7],["Nate","WK",7]]],["2025-11-12",[["Jonny","DC",20]]],["2025-11-12",[["Naomi","PG",5],["Stevie","PG",11]]],["2025-11-12",[["Eberley","WK",3],["Kirsten","WK",3],["Nate","WK",12]]],["2025-11-13",[["Jonny","DC",12]]],["2025-11-13",[["Naomi","PG",7],["Stevie","PG",6]]],["2025-11-13",[["Eberley","WK",4],["Nate","WK",10]]],["2025-11-17",[["Jonny","DC",24]]],["2025-11-17",[["Naomi","PG",6],["Stevie","PG",6]]],["2025-11-17",[["Eberley","WK",6],["Nate","WK",13]]],["2025-11-18",[["Jonny","DC",13]]],["2025-11-18",[["Naomi","PG",12],["Stevie","PG",9]]],["2025-11-18",[["Eberley","WK",5],["Kirsten","WK",1],["Nate","WK",9]]],["2025-11-19",[["Jonny","DC",25]]],["2025-11-19",[["Naomi","PG",13],["Stevie","PG",10]]],["2025-11-19",[["Eberley","WK",4],["Nate","WK",15]]],["2025-11-20",[["Jonny","DC",18]]],["2025-11-20",[["Naomi","PG",4],["Stevie","PG",7]]],["2025-11-20",[["Nate","WK",13]]],["2025-11-21",[["Jonny","DC",18]]],["2025-11-21",[["Eberley","WK",1],["Nate","WK",13]]],["2025-11-24",[["Naomi","PG",6],["Stevie","PG",17]]],["2025-11-24",[["Eberley","WK",3],["Kirsten","WK",3],["Nate","WK",12]]],["2025-11-25",[["Jonny","DC",18]]],["2025-11-25",[["Eberley","WK",4],["Kirsten","WK",4],["Nate","WK",5]]],["2025-11-26",[["Naomi","PG",4],["Stevie","PG",10]]],["2025-11-27",[["Jonny","DC",14],["Jonny","DC",14]]],["2025-11-27",[["Naomi","PG",5],["Naomi","PG",5],["Stevie","PG",9],["Stevie","PG",9]]],["2025-11-27",[["Eberley","WK",7],["Eberley","WK",7],["Nate","WK",14],["Nate","WK",14]]],["2025-11-28",[["Jonny","DC",22]]],["2025-11-28",[["Naomi","PG",18],["Stevie","PG",5]]],["2025-11-28",[["Eberley","WK",6],["Kirsten","WK",6],["Nate","WK",11]]],["2025-12-01",[["Jonny","DC",19]]],["2025-12-01",[["Naomi","PG",7],["Stevie","PG",17]]],["2025-12-01",[["Eberley","WK",4],["Kirsten","WK",1],["Nate","WK",10]]],["2025-12-02",[["Eberley","WK",3],["Nate","WK",15]]],["2025-12-03",[["Jonny","DC",24]]],["2025-12-03",[["Mom","PG",2],["Naomi","PG",6],["Stevie","PG",12]]],["2025-12-03",[["Eberley","WK",4],["Helena","WK",7],["Nate","WK",7]]],["2025-12-04",[["Jonny","DC",17]]],["2025-12-04",[["Eberley","WK",8],["Nate","WK",8]]],["2025-12-05",[["Jonny","DC",17]]],["2025-12-05",[["Naomi","PG",4],["Stevie","PG",6]]],["2025-12-05",[["Eberley","WK",9]]],["2025-12-08",[["Jonny","DC",22]]],["2025-12-08",[["Naomi","PG",18],["Stevie","PG",8]]],["2025-12-08",[["Eberley","WK",6],["Nate","WK",21]]],["2025-12-09",[["Jonny","DC",14]]],["2025-12-09",[["Naomi","PG",8],["Stevie","PG",9]]],["2025-12-09",[["Eberley","WK",1],["Nate","WK",6]]],["2025-12-10",[["Jonny","DC",19]]],["2025-12-10",[["Naomi","PG",5],["Stevie","PG",8]]],["2025-12-10",[["Eberley","WK",4],["Nate","WK",12]]],["2025-12-11",[["Jonny","DC",15]]],["2025-12-11",[["Naomi","PG",7],["Stevie","PG",8]]],["2025-12-11",[["Eberley","WK",8],["Nate","WK",9]]],["2025-12-12",[["Jonny","DC",26]]],["2025-12-12",[["Eberley","WK",6],["Nate","WK",12]]],["2025-12-15",[["Jonny","DC",25]]],["2025-12-15",[["Eberley","WK",5],["Kirsten","WK",2],["Nate","WK",13]]],["2025-12-16",[["Jonny","DC",19]]],["2025-12-16",[["Naomi","PG",5],["Stevie","PG",13]]],["2025-12-16",[["Eberley","WK",13],["Nate","WK",13]]],["2025-12-17",[["Jonny","DC",15],["Jonny","DC",15]]],["2025-12-17",[["Naomi","PG",8],["Naomi","PG",8],["Stevie","PG",13],["Stevie","PG",13]]],["2025-12-17",[["Eberley","WK",1],["Eberley","WK",1],["Kirsten","WK",8],["Kirsten","WK",8],["Nate","WK",8],["Nate","WK",8]]],["2025-12-18",[["Jonny","DC",18]]],["2025-12-18",[["Naomi","PG",7],["Stevie","PG",14]]],["2025-12-18",[["Eberley","WK",1],["Nate","WK",9]]],["2025-12-19",[["Jonny","DC",21]]],["2025-12-19",[["Naomi","PG",14],["Stevie","PG",9]]],["2025-12-19",[["Eberley","WK",5],["Kirsten","WK",7],["Nate","WK",18]]],["2025-12-22",[["Jonny","DC",16]]],["2025-12-22",[["Naomi","PG",6],["Stevie","PG",7]]],["2025-12-22",[["Eberley","WK",5],["Kirsten","WK",2],["Nate","WK",10]]],["2025-12-23",[["Naomi","PG",10],["Stevie","PG",10]]],["2025-12-23",[["Eberley","WK",8],["Nate","WK",6]]],["2025-12-24",[["Jonny","DC",17],["Julia","DC",8]]],["2025-12-24",[["Eberley","WK",6],["Nate","WK",11]]],["2025-12-25",[["Carmen","PG",1],["Jonny","PG",17],["Mom","PG",1],["Naomi","PG",5],["Stevie","PG",6]]],["2025-12-25",[["Eberley","WK",4],["Nate","WK",11]]],["2025-12-26",[["Beckett","DC",3],["Jonny","DC",8]]],["2025-12-26",[["Naomi","PG",8],["Stevie","PG",13]]],["2025-12-26",[["Eberley","WK",4],["Nate","WK",10]]],["2025-12-29",[["Jonny","DC",18]]],["2025-12-29",[["Naomi","PG",9],["Stevie","PG",6]]],["2025-12-29",[["Eberley","WK",8],["Nate","WK",12]]],["2025-12-30",[["Jonny","DC",21]]],["2025-12-30",[["Naomi","PG",2],["Stevie","PG",9]]],["2025-12-30",[["Eberley","WK",6],["Kirsten","WK",1],["Nate","WK",12]]],["2025-12-31",[["Jonny","DC",10]]],["2025-12-31",[["Naomi","PG",3],["Stevie","PG",11]]],["2025-12-31",[["Eberley","WK",4],["Nate","WK",12]]],["2026-01-02",[["Jonny","DC",14],["Julia","DC",5]]],["2026-01-02",[["Naomi","PG",10],["Stevie","PG",7]]],["2026-01-02",[["Eberley","WK",5],["Kirsten","WK",1],["Nate","WK",14]]],["2026-01-05",[["Naomi","PG",3],["Stevie","PG",8]]],["2026-01-05",[["Eberley","WK",4],["Nate","WK",9]]],["2026-01-06",[["Jonny","DC",23]]],["2026-01-07",[["Jonny","DC",14]]],["2026-01-07",[["Naomi","PG",7],["Stevie","PG",11]]],["2026-01-07",[["Eberley","WK",5],["Kirsten","WK",2],["Nate","WK",6]]],["2026-01-08",[["Jonny","DC",16]]],["2026-01-08",[["Naomi","PG",13],["Stevie","PG",4]]],["2026-01-08",[["Eberley","WK",6],["Kirsten","WK",2],["Nate","WK",8]]],["2026-01-09",[["Jonny","DC",17]]],["2026-01-09",[["Naomi","PG",4],["Stevie","PG",8]]],["2026-01-09",[["Kirsten","WK",2],["Nate","WK",8]]],["2026-01-12",[["Jonny","DC",18]]],["2026-01-12",[["Eberley","WK",3],["Nate","WK",12]]],["2026-01-13",[["Jonny","DC",24]]],["2026-01-13",[["Naomi","PG",13],["Stevie","PG",12]]],["2026-01-13",[["Eberley","WK",4],["Nate","WK",13]]],["2026-01-14",[["Jonny","DC",24]]],["2026-01-14",[["Eberley","WK",4],["Kirsten","WK",1],["Nate","WK",7]]],["2026-01-15",[["Naomi","PG",6],["Stevie","PG",12]]],["2026-01-16",[["Jonny","DC",16],["Julia","DC",5]]],["2026-01-16",[["Naomi","PG",7],["Stevie","PG",15]]],["2026-01-16",[["Eberley","WK",8],["Helena","WK",9]]],["2026-01-19",[["Eberley","WK",3],["Nate","WK",8]]],["2026-01-20",[["Jonny","DC",17]]],["2026-01-20",[["Naomi","PG",7],["Stevie","PG",1]]],["2026-01-20",[["Eberley","WK",3],["Kirsten","WK",1],["Nate","WK",9]]],["2026-01-21",[["Jonny","DC",14]]],["2026-01-21",[["Eberley","WK",5],["Nate","WK",8]]],["2026-01-22",[["Jonny","DC",13]]],["2026-01-22",[["Stevie","PG",6]]],["2026-01-22",[["Eberley","WK",7],["Kirsten","WK",6]]],["2026-01-23",[["Jonny","DC",18]]],["2026-01-23",[["Eberley","WK",5],["Nate","WK",12]]],["2026-01-26",[["Jonny","DC",13]]],["2026-01-26",[["Naomi","PG",4],["Stevie","PG",6]]],["2026-01-26",[["Kirsten","WK",1],["Nate","WK",9]]],["2026-01-27",[["Jonny","DC",11],["Julia","DC",4]]],["2026-01-27",[["Naomi","PG",4],["Stevie","PG",6]]],["2026-01-27",[["Eberley","WK",4],["Nate","WK",9]]],["2026-01-28",[["Jonny","DC",12],["Julia","DC",6]]],["2026-01-28",[["Naomi","PG",7],["Stevie","PG",11]]],["2026-01-28",[["Eberley","WK",2],["Nate","WK",12]]],["2026-01-29",[["Jonny","DC",21]]],["2026-01-30",[["Jonny","DC",20],["Julia","DC",4]]],["2026-02-02",[["Jonny","DC",17]]],["2026-02-03",[["Jonny","DC",8],["Julia","DC",2]]],["2026-02-03",[["Naomi","PG",6]]],["2026-02-03",[["Stevie","PG",4]]],["2026-02-03",[["Eberley","WK",4],["Nate","WK",10]]],["2026-02-04",[["Jonny","DC",12],["Julia","DC",6]]],["2026-02-04",[["Stevie","PG",5]]],["2026-02-04",[["Eberley","WK",2],["Kirsten","WK",4],["Nate","WK",14]]],["2026-02-05",[["Naomi","PG",5],["Stevie","PG",11]]],["2026-02-05",[["Naomi","PG",6]]],["2026-02-05",[["Eberley","WK",4],["Nate","WK",13]]],["2026-02-06",[["Jonny","DC",15],["Julia","DC",2]]],["2026-02-06",[["Eberley","WK",3],["Nate","WK",8]]],["2026-02-09",[["Naomi","PG",4],["Stevie","PG",6]]],["2026-02-09",[["Eberley","WK",3],["Kirsten","WK",4],["Nate","WK",12]]],["2026-02-10",[["Jonny","DC",12]]],["2026-02-10",[["Jonny","DC",9],["Julia","DC",4]]],["2026-02-10",[["Eberley","WK",7],["Nate","WK",7]]],["2026-02-11",[["Jonny","DC",5]]],["2026-02-12",[["Eberley","WK",4],["Nate","WK",6]]],["2026-02-13",[["Jonny","DC",16]]],["2026-02-16",[["Jonny","DC",14]]],["2026-02-16",[["Eberley","WK",3],["Kirsten","WK",1],["Nate","WK",5]]],["2026-02-17",[["Jonny","DC",12],["Julia","DC",5]]],["2026-02-17",[["Naomi","PG",8],["Stevie","PG",6]]],["2026-02-17",[["Eberley","WK",7],["Nate","WK",11]]],["2026-02-18",[["Jonny","DC",20]]],["2026-02-18",[["Naomi","PG",10],["Stevie","PG",8]]],["2026-02-18",[["Eberley","WK",3],["Nate","WK",14]]],["2026-02-19",[["Jonny","DC",16],["Julia","DC",8]]],["2026-02-20",[["Jonny","DC",25]]],["2026-02-20",[["Naomi","PG",1]]],["2026-02-20",[["Eberley","WK",1],["Nate","WK",10]]],["2026-02-23",[["Naomi","PG",4],["Stevie","PG",10]]],["2026-02-23",[["Eberley","WK",2],["Nate","WK",14]]],["2026-02-24",[["Jonny","DC",22]]],["2026-02-24",[["Naomi","PG",3],["Stevie","PG",11]]],["2026-02-24",[["Helena","WK",3],["Kirsten","WK",3],["Nate","WK",8]]],["2026-02-25",[["Jonny","DC",17]]],["2026-02-26",[["Naomi","DC",3],["Stevie","DC",8]]],["2026-03-02",[["Naomi","PG",8]]],["2026-03-03",[["Naomi","PG",13],["Stevie","PG",9]]],["2026-03-04",[["Naomi","PG",10],["Stevie","PG",7]]],["2026-03-05",[["Jonny","DC",21]]],["2026-03-05",[["Naomi","PG",9],["Stevie","PG",14]]],["2026-03-06",[["Jonny","DC",27],["Julia","DC",3]]],["2026-03-13",[["Jonny","DC",21],["Naomi","PG",3],["Nate","WK",3]]],["2026-03-16",[["Jonny","DC",20]]],["2026-03-23",[["Jonny","DC",14]]],["2026-03-23",[["Helena","WK",3],["Kirsten","WK",4],["Nate","WK",9]]],["2026-03-24",[["Eberley","WK",5],["Nate","WK",7]]],["2026-03-25",[["Jonny","DC",31]]],["2026-03-25",[["Naomi","PG",10],["Stevie","PG",9]]],["2026-03-25",[["Eberley","WK",6],["Helena","WK",3],["Nate","WK",11]]],["2026-03-26",[["Jonny","DC",26]]],["2026-03-27",[["Jonny","DC",22]]],["2026-03-27",[["Naomi","PG",8],["Stevie","PG",16]]],["2026-03-30",[["Eberley","WK",5],["Nate","WK",9]]],["2026-03-31",[["Jonny","DC",26]]],["2026-03-31",[["Eberley","WK",2],["Nate","WK",14]]],["2026-03-31",[["Kirsten","WK",1]]],["2026-04-01",[["Jonny","DC",19],["Julia","DC",7]]],["2026-04-01",[["Naomi","PG",7],["Stevie","PG",10]]],["2026-04-01",[["Eberley","WK",2],["Nate","WK",21]]],["2026-04-02",[["Jonny","DC",16]]],["2026-04-03",[["Jonny","DC",19]]],["2026-04-03",[["Kirsten","WK",3]]],["2026-04-06",[["Jonny","DC",23]]],["2026-04-06",[["Naomi","PG",6],["Stevie","PG",7]]],["2026-04-07",[["Jonny","DC",18]]],["2026-04-07",[["Eberley","WK",5],["Kirsten","WK",5],["Nate","WK",7]]],["2026-04-08",[["Naomi","PG",7],["Stevie","PG",8]]],["2026-04-09",[["Jonny","DC",18]]],["2026-04-10",[["Jonny","DC",20]]],["2026-04-13",[["Jonny","DC",19]]],["2026-04-13",[["Naomi","PG",2],["Stevie","PG",14]]],["2026-04-14",[["Jonny","DC",22]]],["2026-04-14",[["Naomi","PG",9],["Stevie","PG",11]]],["2026-04-15",[["Jonny","DC",14]]],["2026-04-16",[["Jonny","DC",19]]],["2026-04-20",[["Naomi","PG",10],["Stevie","PG",4]]],["2026-04-21",[["Naomi","PG",10],["Stevie","PG",5]]],["2026-04-21",[["Eberley","WK",1],["Kirsten","WK",1]]],["2026-04-22",[["Jonny","DC",21]]],["2026-04-22",[["Naomi","PG",10],["Stevie","PG",12]]],["2026-04-22",[["Eberley","WK",5],["Nate","WK",6]]],["2026-04-23",[["Jonny","DC",4]]],["2026-04-27",[["Jonny","DC",24]]],["2026-04-27",[["Eberley","WK",5],["Nate","WK",12]]],["2026-04-30",[["Jonny","DC",20]]],["2026-05-05",[["Naomi","PG",8],["Stevie","PG",9]]],["2026-05-05",[["Eberley","WK",2],["Nate","WK",12]]],["2026-05-06",[["Jonny","DC",23]]],["2026-05-06",[["Naomi","PG",10],["Stevie","PG",9]]],["2026-05-06",[["Eberley","WK",2],["Nate","WK",12]]],["2026-05-07",[["Jonny","DC",22]]],["2026-05-11",[["Naomi","PG",4],["Stevie","PG",13]]],["2026-05-11",[["Eberley","WK",8],["Kirsten","WK",1],["Nate","WK",10]]],["2026-05-12",[["Jonny","DC",23]]],["2026-05-12",[["Naomi","PG",5],["Stevie","PG",12]]],["2026-05-12",[["Eberley","WK",4],["Nate","WK",13]]],["2026-05-18",[["Naomi","PG",2],["Stevie","PG",8]]],["2026-05-18",[["Eberley","WK",5],["Kirsten","WK",1],["Nate","WK",13]]],["2026-05-19",[["Jonny","DC",15]]],["2026-05-19",[["Eberley","WK",6],["Nate","WK",13]]],["2026-05-20",[["Jonny","DC",6]]],["2026-05-20",[["Eberley","WK",3],["Nate","WK",16]]],["2026-05-21",[["Dad","DC",2],["Jonny","DC",15],["Julia","DC",6],["Mom","DC",2]]],["2026-05-21",[["Naomi","PG",6],["Stevie","PG",13]]],["2026-05-21",[["Eberley","WK",3],["Nate","WK",15]]],["2026-05-22",[["Eberley","WK",1],["Nate","WK",9]]],["2026-05-25",[["Jonny","DC",22]]],["2026-05-25",[["Eberley","WK",4],["Nate","WK",11]]]],"s":"2026-01-01"};
+const {useState,useMemo,useRef,useEffect} = React;
+
+/* ============ MODEL ============ */
+const CURVE = APP_DATA.c;
+const SEASON_START = APP_DATA.s;
+const fc = (n)=> CURVE.a/(1+CURVE.b*(n-1));   // family decay curve
+
+// build couch list from compact data
+const COUCHES = APP_DATA.g.map((row,i)=>({
+  id:i, date:row[0],
+  size:row[1].length,
+  players:row[1].map(p=>({name:p[0],city:p[1],score:p[2]}))
+}));
+
+const CITY_NAMES={DC:'Dawson Creek',PG:'Prince George',WK:'West Kelowna'};
+const PLAYER_CITY={Jonny:'DC',Julia:'DC',Mom:'DC',Dad:'DC',Carmen:'DC',Beckett:'DC',
+  Naomi:'PG',Stevie:'PG',Nate:'WK',Eberley:'WK',Kirsten:'WK',Helena:'WK',Kevin:'WK'};
+const ALL_PLAYERS=['Jonny','Nate','Stevie','Naomi','Eberley','Kirsten','Julia',
+  'Helena','Mom','Dad','Carmen','Beckett','Kevin'];
+const MIN_GAMES=5;
+
+function daysBetween(a,b){return (new Date(b)-new Date(a))/86400000;}
+
+// rolling-365-day multiplier for a player as of a date
+function multiplier(player,asof,couches){
+  const ratios=[];
+  for(const c of couches){
+    if(c.date>=asof) continue;
+    if(daysBetween(c.date,asof)>365) continue;
+    for(const p of c.players){
+      if(p.name===player){ const e=fc(c.size); if(e>0) ratios.push(p.score/e);}
+    }
+  }
+  if(ratios.length<MIN_GAMES) return {mult:1,games:ratios.length,provisional:true};
+  return {mult:ratios.length?ratios.reduce((a,b)=>a+b,0)/ratios.length:1,
+          games:ratios.length,provisional:false};
+}
+
+// daily index for every player-game on a given date
+function dayResults(date,couches){
+  const todays=couches.filter(c=>c.date===date);
+  const out=[];
+  for(const c of todays){
+    for(const p of c.players){
+      const m=multiplier(p.name,date,couches);
+      const expected=m.mult*fc(c.size);
+      const index= expected>0 ? (p.score/expected)*100 : 100;
+      out.push({name:p.name,city:p.city,score:p.score,size:c.size,
+                expected,index,provisional:m.provisional,games:m.games});
+    }
+  }
+  return out;
+}
+
+// aggregate index leaderboard over a date range
+function rangeBoard(fromDate,toDate,couches){
+  const ind={},city={};
+  const dates=[...new Set(couches.map(c=>c.date))]
+    .filter(d=>d>=fromDate&&d<=toDate).sort();
+  for(const d of dates){
+    const res=dayResults(d,couches);
+    for(const r of res){
+      if(!ind[r.name]) ind[r.name]={sum:0,n:0,prov:r.provisional};
+      ind[r.name].sum+=r.index; ind[r.name].n++; ind[r.name].prov=r.provisional;
+    }
+    const byCity={};
+    for(const r of res){(byCity[r.city]=byCity[r.city]||[]).push(r.index);}
+    for(const c in byCity){
+      const avg=byCity[c].reduce((a,b)=>a+b,0)/byCity[c].length;
+      if(!city[c]) city[c]={sum:0,n:0};
+      city[c].sum+=avg; city[c].n++;
+    }
+  }
+  const indArr=Object.entries(ind).map(([nm,v])=>({name:nm,avg:v.sum/v.n,
+    games:v.n,provisional:v.prov})).sort((a,b)=>b.avg-a.avg);
+  const cityArr=Object.entries(city).map(([c,v])=>({city:c,avg:v.sum/v.n,days:v.n}))
+    .sort((a,b)=>b.avg-a.avg);
+  return {indArr,cityArr,dates};
+}
+
+// days-won tally
+function daysWonTally(fromDate,couches){
+  const dw={},cw={};
+  const dates=[...new Set(couches.map(c=>c.date))].filter(d=>d>=fromDate).sort();
+  for(const d of dates){
+    const res=dayResults(d,couches).filter(r=>!r.provisional);
+    if(!res.length) continue;
+    const best=Math.max(...res.map(r=>r.index));
+    const winners=res.filter(r=>Math.abs(r.index-best)<1e-6);
+    winners.forEach(w=>dw[w.name]=(dw[w.name]||0)+1/winners.length);
+    // city
+    const byCity={};
+    res.forEach(r=>(byCity[r.city]=byCity[r.city]||[]).push(r.index));
+    const cAvg=Object.entries(byCity).map(([c,v])=>
+      [c,v.reduce((a,b)=>a+b,0)/v.length]);
+    const cBest=Math.max(...cAvg.map(x=>x[1]));
+    const cWin=cAvg.filter(x=>Math.abs(x[1]-cBest)<1e-6);
+    cWin.forEach(x=>cw[x[0]]=(cw[x[0]]||0)+1/cWin.length);
+  }
+  return {dw,cw};
+}
+
+/* ============ helpers ============ */
+const AV_COLORS={Jonny:'#c0392b',Julia:'#cd6d3a',Mom:'#a8478b',Dad:'#7d5a3c',
+  Carmen:'#b5654d',Beckett:'#8e5a9e',Naomi:'#27ae60',Stevie:'#16895a',
+  Nate:'#2980b9',Eberley:'#3a7bb5',Kirsten:'#5566c0',Helena:'#4a8fb0',Kevin:'#557799'};
+const initials=n=>n.slice(0,2).toUpperCase();
+function fmtDate(d){
+  const[y,m,day]=d.split('-');
+  const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m-1];
+  return `${mo} ${+day}, ${y}`;
+}
+const LAST_DATE=COUCHES[COUCHES.length-1].date;
+
+/* ============ ICONS ============ */
+const Ico={
+  trophy:<svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9H4.5a2.5 2.5 0 010-5H6m12 5h1.5a2.5 2.5 0 000-5H18M6 4h12v5a6 6 0 11-12 0V4z"/><path d="M9 18h6M10 22h4M12 18v4"/></svg>,
+  plus:<svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>,
+  chart:<svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="7"/><rect x="13" y="6" width="3" height="12"/><rect x="19" y="14" width="3" height="4" transform="translate(-1 0)"/></svg>,
+  chat:<svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 11.5a8.38 8.38 0 01-8.5 8.5 8.5 8.5 0 01-3.8-.9L3 21l1.9-5.7A8.38 8.38 0 014 11.5 8.5 8.5 0 1121 11.5z"/></svg>,
+  city:<svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg>
+};
+
+/* ============ SHARED COMPONENTS ============ */
+function Avatar({name,size=38}){
+  return <div className="avatar" style={{background:AV_COLORS[name]||'#556',
+    width:size,height:size,fontSize:size*0.42}}>{initials(name)}</div>;
+}
+function CityTag({city}){
+  return <span className={`citytag city-${city}`}>{city}</span>;
+}
+
+/* ============ LEADERBOARD VIEW ============ */
+function LeaderboardView(){
+  const [period,setPeriod]=useState('week');   // day week month season
+  const [mode,setMode]=useState('handicap');   // handicap (only mode now)
+  const [scope,setScope]=useState('ind');      // ind | city
+
+  const ranges=useMemo(()=>{
+    const end=LAST_DATE;
+    const d=new Date(end);
+    const back=(n)=>{const x=new Date(d);x.setDate(x.getDate()-n);
+      return x.toISOString().slice(0,10);};
+    return {
+      day:[end,end],
+      week:[back(6),end],
+      month:[back(29),end],
+      season:[SEASON_START,end]
+    };
+  },[]);
+
+  const [from,to]=ranges[period];
+  const board=useMemo(()=>rangeBoard(from,to,COUCHES),[from,to]);
+  const champDay=useMemo(()=>dayResults(LAST_DATE,COUCHES),[]);
+
+  // champion of the current period
+  const champ = scope==='ind'
+    ? board.indArr[0]
+    : board.cityArr[0];
+
+  const periodLabel={day:'Today',week:'This Week',month:'This Month',season:'2026 Season'}[period];
+
+  return (
+    <div className="scroll fade">
+      <div className="pad">
+        <div className="seg">
+          {['day','week','month','season'].map(p=>(
+            <button key={p} className={period===p?'on':''}
+              onClick={()=>setPeriod(p)}>{
+              {day:'Day',week:'Week',month:'Month',season:'Season'}[p]}</button>
+          ))}
+        </div>
+        <div className="seg" style={{marginTop:6}}>
+          <button className={scope==='ind'?'on':''} onClick={()=>setScope('ind')}>Players</button>
+          <button className={scope==='city'?'on':''} onClick={()=>setScope('city')}>Cities</button>
+        </div>
+      </div>
+
+      {/* champion crown */}
+      {champ &&
+        <div className="pad">
+          <div className="champ">
+            <div className="crown">👑</div>
+            <div className="lbl">{periodLabel} · {scope==='ind'?'Top Player':'Top City'}</div>
+            <div className="who">{scope==='ind'?champ.name:CITY_NAMES[champ.city]}</div>
+            <div className="idx">Performance Index&nbsp;
+              {Math.round(scope==='ind'?champ.avg:champ.avg)}</div>
+          </div>
+        </div>}
+
+      <div className="pad">
+        <div className="section-title">
+          {scope==='ind'?'Player Standings':'City Standings'} — {periodLabel}
+        </div>
+        <div className="card" style={{padding:'4px 2px'}}>
+          {scope==='ind'
+            ? board.indArr.map((p,i)=>(
+                <div className="lb-row" key={p.name}>
+                  <div className={`rank r${i+1}`}>{i+1}</div>
+                  <Avatar name={p.name}/>
+                  <div className="lb-name">
+                    <div className="nm">{p.name} {p.provisional &&
+                      <span className="prov">new</span>}</div>
+                    <div className="sub">{p.games} {p.games===1?'day':'days'} ·
+                      &nbsp;<CityTag city={PLAYER_CITY[p.name]}/></div>
+                  </div>
+                  <div className="lb-score">{Math.round(p.avg)}
+                    <span className="u"> idx</span></div>
+                </div>))
+            : board.cityArr.map((c,i)=>(
+                <div className="lb-row" key={c.city}>
+                  <div className={`rank r${i+1}`}>{i+1}</div>
+                  <div className={`avatar city-${c.city}`}>{c.city}</div>
+                  <div className="lb-name">
+                    <div className="nm">{CITY_NAMES[c.city]}</div>
+                    <div className="sub">{c.days} days scored</div>
+                  </div>
+                  <div className="lb-score">{Math.round(c.avg)}
+                    <span className="u"> idx</span></div>
+                </div>))}
+          {scope==='ind' && board.indArr.length===0 &&
+            <div className="empty">No games in this period yet.</div>}
+        </div>
+
+        <div className="hint">
+          Performance Index = your score vs. what's expected of you, given couch
+          size & your recent form. 100 = exactly on form. Higher = you beat
+          expectations.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============ TODAY VIEW ============ */
+function TodayView(){
+  const res=useMemo(()=>dayResults(LAST_DATE,COUCHES)
+    .sort((a,b)=>b.index-a.index),[]);
+  const eligible=res.filter(r=>!r.provisional);
+  const winner=eligible[0];
+  const tally=useMemo(()=>daysWonTally(SEASON_START,COUCHES),[]);
+  const dwArr=Object.entries(tally.dw).map(([n,v])=>({name:n,wins:v}))
+    .sort((a,b)=>b.wins-a.wins);
+  const cwArr=Object.entries(tally.cw).map(([c,v])=>({city:c,wins:v}))
+    .sort((a,b)=>b.wins-a.wins);
+
+  return (
+    <div className="scroll fade">
+      <div className="pad">
+        <div className="section-title">Latest Game Night · {fmtDate(LAST_DATE)}</div>
+        {winner &&
+          <div className="champ">
+            <div className="crown">🏆</div>
+            <div className="lbl">Winner of the Day</div>
+            <div className="who">{winner.name}</div>
+            <div className="idx">Index {Math.round(winner.index)} ·
+              scored {winner.score}, expected {winner.expected.toFixed(1)}</div>
+          </div>}
+
+        <div className="card" style={{padding:'4px 2px'}}>
+          {res.map((r,i)=>(
+            <div className="lb-row" key={r.name+i}>
+              <div className={`rank r${i+1}`}>{i+1}</div>
+              <Avatar name={r.name}/>
+              <div className="lb-name">
+                <div className="nm">{r.name} {r.provisional &&
+                  <span className="prov">new</span>}</div>
+                <div className="sub">scored {r.score} · expected&nbsp;
+                  {r.expected.toFixed(1)} · {r.size===1?'solo':r.size+'-couch'}</div>
+              </div>
+              <div className="lb-score">{Math.round(r.index)}
+                <span className="u"> idx</span></div>
+            </div>))}
+        </div>
+      </div>
+
+      <div className="pad">
+        <div className="section-title">2026 Season · Days Won</div>
+        <div className="card" style={{padding:'4px 2px'}}>
+          {dwArr.map((p,i)=>{
+            const max=dwArr[0].wins;
+            return (
+            <div className="lb-row" key={p.name}>
+              <div className={`rank r${i+1}`}>{i+1}</div>
+              <Avatar name={p.name} size={32}/>
+              <div className="lb-name">
+                <div className="nm">{p.name}</div>
+                <div className="mini-bar"><i style={{width:(p.wins/max*100)+'%'}}/></div>
+              </div>
+              <div className="lb-score">{p.wins%1?p.wins.toFixed(1):p.wins}
+                <span className="u"> won</span></div>
+            </div>);
+          })}
+        </div>
+
+        <div className="section-title">2026 Season · City Days Won</div>
+        <div className="card" style={{padding:'4px 2px'}}>
+          {cwArr.map((c,i)=>{
+            const max=cwArr[0].wins;
+            return(
+            <div className="lb-row" key={c.city}>
+              <div className={`rank r${i+1}`}>{i+1}</div>
+              <div className={`avatar city-${c.city}`} style={{width:32,height:32,
+                fontSize:13}}>{c.city}</div>
+              <div className="lb-name">
+                <div className="nm">{CITY_NAMES[c.city]}</div>
+                <div className="mini-bar"><i style={{width:(c.wins/max*100)+'%'}}/></div>
+              </div>
+              <div className="lb-score">{c.wins%1?c.wins.toFixed(1):c.wins}
+                <span className="u"> won</span></div>
+            </div>);
+          })}
+        </div>
+        <div className="hint">Days Won counts each game night's top performer.
+          Ties split. Players need {MIN_GAMES}+ recent games to be eligible.</div>
+      </div>
+    </div>
+  );
+}
+
+/* ============ SCORE ENTRY ============ */
+function EntryView({onSubmit}){
+  const [date,setDate]=useState(LAST_DATE);
+  const [couches,setCouches]=useState([{players:{}}]); // each: {playerName:score}
+  const [picking,setPicking]=useState(0);
+
+  function togglePlayer(ci,name){
+    setCouches(cs=>cs.map((c,i)=>{
+      if(i!==ci) return c;
+      const p={...c.players};
+      if(name in p) delete p[name]; else p[name]=0;
+      return {players:p};
+    }));
+  }
+  function setScore(ci,name,delta){
+    setCouches(cs=>cs.map((c,i)=>{
+      if(i!==ci) return c;
+      const p={...c.players};
+      p[name]=Math.max(0,Math.min(66,(p[name]||0)+delta));
+      return {players:p};
+    }));
+  }
+  const usedPlayers=new Set(couches.flatMap(c=>Object.keys(c.players)));
+
+  const couchTotals=couches.map(c=>
+    Object.values(c.players).reduce((a,b)=>a+b,0));
+  const anyOver=couchTotals.some(t=>t>66);
+  const anyEmpty=couches.some(c=>Object.keys(c.players).length===0);
+
+  return (
+    <div className="scroll fade">
+      <div className="pad">
+        <div className="field-label">Game Date</div>
+        <input className="date-in" type="date" value={date}
+          max={new Date().toISOString().slice(0,10)}
+          onChange={e=>setDate(e.target.value)}/>
+
+        {couches.map((couch,ci)=>(
+          <div key={ci}>
+            <div className="field-label" style={{display:'flex',
+              justifyContent:'space-between'}}>
+              <span>Couch {ci+1} — Who Played This Screen?</span>
+              {couches.length>1 &&
+                <span style={{color:'var(--red)',cursor:'pointer'}}
+                  onClick={()=>setCouches(cs=>cs.filter((_,i)=>i!==ci))}>remove</span>}
+            </div>
+            <div className="couch-box">
+              <div className="player-pick">
+                {ALL_PLAYERS.map(name=>{
+                  const sel=name in couch.players;
+                  const takenElsewhere=usedPlayers.has(name)&&!sel;
+                  return <button key={name}
+                    className={`pp ${sel?'sel':''}`}
+                    disabled={takenElsewhere}
+                    style={takenElsewhere?{opacity:.25}:{}}
+                    onClick={()=>togglePlayer(ci,name)}>{name}</button>;
+                })}
+              </div>
+              {Object.keys(couch.players).length>0 &&
+                <div style={{marginTop:12}}>
+                  {Object.keys(couch.players).map(name=>(
+                    <div className="score-row" key={name}>
+                      <Avatar name={name} size={30}/>
+                      <div className="nm">{name}</div>
+                      <div className="stepper">
+                        <button onClick={()=>setScore(ci,name,-1)}>–</button>
+                        <div className="val">{couch.players[name]}</div>
+                        <button onClick={()=>setScore(ci,name,1)}>+</button>
+                      </div>
+                    </div>))}
+                  <div className={`total-chip ${couchTotals[ci]>66?'bad':''}`}>
+                    Couch total: {couchTotals[ci]} / 66
+                    {couchTotals[ci]>66 && ' — over the max!'}
+                  </div>
+                </div>}
+            </div>
+          </div>
+        ))}
+
+        <button className="pp" style={{width:'100%',marginTop:12,padding:11}}
+          onClick={()=>setCouches(cs=>[...cs,{players:{}}])}>
+          + Add Another Couch (different city / screen)
+        </button>
+
+        <button className="big-btn" disabled={anyOver||anyEmpty}
+          onClick={()=>onSubmit(date,couches)}>
+          Submit Game Night
+        </button>
+        <div className="hint">
+          Add a separate couch for each screen being played — Dawson Creek,
+          Prince George and West Kelowna are usually their own couches.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============ CHAT ============ */
+const SEED_CHAT=[
+  {who:'Nate',me:false,text:'11 and 4 tonight. Brutal final.'},
+  {who:'Jonny',me:true,text:'A and Dub 22 over here! 🥳'},
+  {who:'Naomi',me:false,text:'Big dogg won again 🙄 13-6'},
+  {who:'Nate',me:false,gif:'https://media.tenor.com/x8v1oNUOmg4AAAAC/love-it.gif'},
+];
+const GIFS=[
+  'https://media.tenor.com/x8v1oNUOmg4AAAAC/love-it.gif',
+  'https://media.tenor.com/gUiu1zyxfzYAAAAC/thumbs-up.gif',
+  'https://media.tenor.com/NShE0_Nm9ksAAAAC/clapping.gif',
+  'https://media.tenor.com/bI1JZcaJYIYAAAAC/mind-blown.gif',
+];
+function ChatView(){
+  const [msgs,setMsgs]=useState(SEED_CHAT);
+  const [txt,setTxt]=useState('');
+  const [tray,setTray]=useState(false);
+  const endRef=useRef();
+  useEffect(()=>{endRef.current&&endRef.current.scrollIntoView();},[msgs]);
+  function send(){
+    if(!txt.trim()) return;
+    setMsgs(m=>[...m,{who:'Jonny',me:true,text:txt.trim()}]);
+    setTxt('');
+  }
+  function sendGif(url){
+    setMsgs(m=>[...m,{who:'Jonny',me:true,gif:url}]);
+    setTray(false);
+  }
+  return (
+    <div className="chat-wrap fade">
+      <div className="chat-scroll">
+        {msgs.map((m,i)=>(
+          <div className={`msg ${m.me?'me':'them'}`} key={i}>
+            {!m.me && <div className="who" style={{color:AV_COLORS[m.who]}}>{m.who}</div>}
+            {m.text && <div>{m.text}</div>}
+            {m.gif && <img src={m.gif} alt="gif"/>}
+          </div>))}
+        <div ref={endRef}/>
+      </div>
+      {tray &&
+        <div className="gif-tray">
+          {GIFS.map(g=><img key={g} src={g} onClick={()=>sendGif(g)} alt="gif"/>)}
+        </div>}
+      <div className="chat-input">
+        <button className="gif-btn" onClick={()=>setTray(t=>!t)}>GIF</button>
+        <input value={txt} placeholder="Message the family…"
+          onChange={e=>setTxt(e.target.value)}
+          onKeyDown={e=>e.key==='Enter'&&send()}/>
+        <button onClick={send}>➤</button>
+      </div>
+    </div>
+  );
+}
+
+/* ============ APP SHELL ============ */
+function App(){
+  const [tab,setTab]=useState('today');
+  const [toast,setToast]=useState('');
+  function handleSubmit(date,couches){
+    const n=couches.reduce((s,c)=>s+Object.keys(c.players).length,0);
+    setToast(`Logged ${n} score${n>1?'s':''} for ${fmtDate(date)} ✓`);
+    setTimeout(()=>setToast(''),2600);
+    setTab('today');
+  }
+  return (
+    <React.Fragment>
+      <header>
+        <div className="wordmark"><span className="kur">KUR</span><span className="jeop">JEOPARDY</span></div>
+        <div className="tagline">The Kurjata Family League</div>
+      </header>
+
+      {tab==='today' && <TodayView/>}
+      {tab==='board' && <LeaderboardView/>}
+      {tab==='entry' && <EntryView onSubmit={handleSubmit}/>}
+      {tab==='chat'  && <ChatView/>}
+
+      {toast && <div className="toast">{toast}</div>}
+
+      <nav>
+        <button className={tab==='today'?'on':''} onClick={()=>setTab('today')}>
+          {Ico.trophy}<span>Today</span></button>
+        <button className={tab==='board'?'on':''} onClick={()=>setTab('board')}>
+          {Ico.chart}<span>Standings</span></button>
+        <button className={tab==='entry'?'on':''} onClick={()=>setTab('entry')}>
+          {Ico.plus}<span>Add Scores</span></button>
+        <button className={tab==='chat'?'on':''} onClick={()=>setTab('chat')}>
+          {Ico.chat}<span>Chat</span></button>
+      </nav>
+    </React.Fragment>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+
+</script>
+
