@@ -1,17 +1,17 @@
 import { useState, useMemo } from 'react';
-import { COUCHES, SEASON_START, LAST_DATE, CITY_NAMES, PLAYER_CITY, dayResults, rangeBoard } from '../model.js';
+import { SEASON_START, CITY_NAMES, PLAYER_CITY, dayResults, rangeBoard } from '../model.js';
 import { Avatar, CityTag, weekKey, monthKey, yearKey, periodLabel } from './shared.jsx';
 
-function SummaryBoard() {
+function SummaryBoard({ couches, ratings, lastDate }) {
   const [period, setPeriod] = useState('week');
   const [scope, setScope] = useState('ind');
   const ranges = useMemo(() => {
-    const end = LAST_DATE, d = new Date(end);
+    const end = lastDate, d = new Date(end);
     const back = n => { const x = new Date(d); x.setDate(x.getDate() - n); return x.toISOString().slice(0, 10); };
     return { day: [end, end], week: [back(6), end], month: [back(29), end], season: [SEASON_START, end] };
-  }, []);
+  }, [lastDate]);
   const r = ranges[period];
-  const board = useMemo(() => rangeBoard(r[0], r[1], COUCHES), [r[0], r[1]]);
+  const board = useMemo(() => rangeBoard(r[0], r[1], couches, ratings), [r[0], r[1], couches, ratings]);
   const champ = scope === 'ind' ? board.indArr[0] : board.cityArr[0];
   const plbl = { day: 'Today', week: 'This Week', month: 'This Month', season: '2026 Season' }[period];
 
@@ -70,14 +70,14 @@ function SummaryBoard() {
   );
 }
 
-function ArchiveBoard() {
+function ArchiveBoard({ couches, ratings }) {
   const [gran, setGran] = useState('day');
   const [scope, setScope] = useState('ind');
   const [open, setOpen] = useState(null);
 
   const periods = useMemo(() => {
     const keyFn = { day: d => d, week: weekKey, month: monthKey, year: yearKey }[gran];
-    const dates = [...new Set(COUCHES.map(c => c.date))]
+    const dates = [...new Set(couches.map(c => c.date))]
       .filter(d => d >= SEASON_START).sort();
     const buckets = {};
     for (const d of dates) {
@@ -89,7 +89,7 @@ function ArchiveBoard() {
         const k = entry[0], ds = entry[1];
         const indAgg = {}, cityAgg = {};
         for (const d of ds) {
-          const res = dayResults(d, COUCHES);
+          const res = dayResults(d, couches, ratings);
           for (const rr of res) {
             if (!indAgg[rr.name]) indAgg[rr.name] = { sum: 0, n: 0, prov: rr.provisional };
             indAgg[rr.name].sum += rr.index; indAgg[rr.name].n++;
@@ -111,7 +111,7 @@ function ArchiveBoard() {
         }).sort((a, b) => b.avg - a.avg);
         return { key: k, dates: ds, indRank, cityRank };
       });
-  }, [gran]);
+  }, [gran, couches, ratings]);
 
   return (
     <>
@@ -162,7 +162,7 @@ function ArchiveBoard() {
                 {isOpen &&
                   <div className="arch-detail">
                     {gran === 'day' && scope === 'ind'
-                      ? dayResults(p.key, COUCHES).sort((a, b) => b.index - a.index)
+                      ? dayResults(p.key, couches, ratings).sort((a, b) => b.index - a.index)
                         .map(function (rr, i) {
                           return (
                             <div className="detail-row" key={rr.name + i}>
@@ -205,7 +205,7 @@ function ArchiveBoard() {
   );
 }
 
-export default function LeaderboardView() {
+export default function LeaderboardView({ couches, ratings, lastDate }) {
   const [mode, setMode] = useState('summary');
   return (
     <div className="scroll fade">
@@ -217,7 +217,9 @@ export default function LeaderboardView() {
             onClick={() => setMode('archive')}>Archive</button>
         </div>
       </div>
-      {mode === 'summary' ? <SummaryBoard /> : <ArchiveBoard />}
+      {mode === 'summary'
+        ? <SummaryBoard couches={couches} ratings={ratings} lastDate={lastDate} />
+        : <ArchiveBoard couches={couches} ratings={ratings} />}
     </div>
   );
 }

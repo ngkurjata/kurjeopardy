@@ -1,12 +1,15 @@
 import { useMemo } from 'react';
-import { COUCHES, SEASON_START, LAST_DATE, MIN_GAMES, CITY_NAMES, dayResults, daysWonTally } from '../model.js';
+import { SEASON_START, MIN_GAMES, CITY_NAMES, dayResults, daysWonTally } from '../model.js';
 import { Avatar, fmtDate } from './shared.jsx';
 
-export default function TodayView() {
-  const res = useMemo(() => dayResults(LAST_DATE, COUCHES).sort((a, b) => b.index - a.index), []);
+export default function TodayView({ couches, ratings, lastDate }) {
+  const res = useMemo(
+    () => dayResults(lastDate, couches, ratings).sort((a, b) => b.index - a.index),
+    [lastDate, couches, ratings]
+  );
   const eligible = res.filter(r => !r.provisional);
   const winner = eligible[0];
-  const tally = useMemo(() => daysWonTally(SEASON_START, COUCHES), []);
+  const tally = useMemo(() => daysWonTally(SEASON_START, couches, ratings), [couches, ratings]);
   const dwArr = Object.entries(tally.dw).map(([n, v]) => ({ name: n, wins: v }))
     .sort((a, b) => b.wins - a.wins);
   const cwArr = Object.entries(tally.cw).map(([c, v]) => ({ city: c, wins: v }))
@@ -15,7 +18,7 @@ export default function TodayView() {
   return (
     <div className="scroll fade">
       <div className="pad">
-        <div className="section-title">Latest Game Night · {fmtDate(LAST_DATE)}</div>
+        <div className="section-title">Latest Game Night · {fmtDate(lastDate)}</div>
         {winner &&
           <div className="champ">
             <div className="crown">🏆</div>

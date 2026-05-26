@@ -1,7 +1,11 @@
-import APP_DATA from './data.js';
-
-export const CURVE = APP_DATA.c;
-export const SEASON_START = APP_DATA.s;
+// Curve params and season start are fixed constants derived from the original dataset fit.
+const CURVE = {
+  a: 16.793732809171207,
+  b: 0.9586532406447151,
+  raw: { 1: 16.8130081300813, 2: 8.426229508196721, 3: 5.920634920634921,
+         4: 8.5625, 5: 6.0, 6: 5.666666666666667, 9: 4.0 },
+};
+export const SEASON_START = '2026-01-01';
 
 // family curve value at couch size n
 export function fc(n) {
@@ -19,12 +23,6 @@ export function fc(n) {
   return raw[lo] + f * (raw[hi] - raw[lo]);
 }
 
-export const COUCHES = APP_DATA.g.map((row, i) => ({
-  id: i, date: row[0],
-  size: row[1].length,
-  players: row[1].map(p => ({ name: p[0], city: p[1], score: p[2] }))
-}));
-
 export const CITY_NAMES = { DC: 'Dawson Creek', PG: 'Prince George', WK: 'West Kelowna' };
 export const PLAYER_CITY = {
   Jonny: 'DC', Julia: 'DC', Mom: 'DC', Dad: 'DC', Carmen: 'DC', Beckett: 'DC',
@@ -34,11 +32,12 @@ export const ALL_PLAYERS = ['Jonny', 'Nate', 'Stevie', 'Naomi', 'Eberley', 'Kirs
   'Helena', 'Mom', 'Dad', 'Carmen', 'Beckett', 'Kevin'];
 export const MIN_GAMES = 5;
 
-export const RATINGS = (function () {
+// player rating = avg of (score / curve) over ALL their games.
+export function computeRatings(couches) {
   const acc = {};
-  for (const c of COUCHES) {
+  for (const c of couches) {
     for (const p of c.players) {
-      const e = fc(c.size);
+      const e = fc(c.players.length);
       if (e <= 0) continue;
       if (!acc[p.name]) acc[p.name] = { sum: 0, n: 0 };
       acc[p.name].sum += p.score / e;
@@ -48,20 +47,20 @@ export const RATINGS = (function () {
   const out = {};
   for (const nm in acc) out[nm] = { rating: acc[nm].sum / acc[nm].n, games: acc[nm].n };
   return out;
-})();
+}
 
-export function rating(name) {
-  const r = RATINGS[name];
+function rating(name, ratings) {
+  const r = ratings[name];
   if (!r) return { rating: 1, games: 0, provisional: true };
   return { rating: r.rating, games: r.games, provisional: r.games < MIN_GAMES };
 }
 
-export function dayResults(date, couches) {
+export function dayResults(date, couches, ratings) {
   const todays = couches.filter(c => c.date === date);
   const out = [];
   for (const c of todays) {
     for (const p of c.players) {
-      const r = rating(p.name);
+      const r = rating(p.name, ratings);
       const expected = r.rating * fc(c.players.length);
       const index = expected > 0 ? (p.score / expected) * 100 : 100;
       out.push({
@@ -73,12 +72,12 @@ export function dayResults(date, couches) {
   return out;
 }
 
-export function rangeBoard(fromDate, toDate, couches) {
+export function rangeBoard(fromDate, toDate, couches, ratings) {
   const ind = {}, city = {};
   const dates = [...new Set(couches.map(c => c.date))]
     .filter(d => d >= fromDate && d <= toDate).sort();
   for (const d of dates) {
-    const res = dayResults(d, couches);
+    const res = dayResults(d, couches, ratings);
     for (const r of res) {
       if (!ind[r.name]) ind[r.name] = { sum: 0, n: 0, prov: r.provisional };
       ind[r.name].sum += r.index; ind[r.name].n++; ind[r.name].prov = r.provisional;
@@ -99,11 +98,11 @@ export function rangeBoard(fromDate, toDate, couches) {
   return { indArr, cityArr, dates };
 }
 
-export function daysWonTally(fromDate, couches) {
+export function daysWonTally(fromDate, couches, ratings) {
   const dw = {}, cw = {};
   const dates = [...new Set(couches.map(c => c.date))].filter(d => d >= fromDate).sort();
   for (const d of dates) {
-    const res = dayResults(d, couches).filter(r => !r.provisional);
+    const res = dayResults(d, couches, ratings).filter(r => !r.provisional);
     if (!res.length) continue;
     const best = Math.max(...res.map(r => r.index));
     const winners = res.filter(r => Math.abs(r.index - best) < 1e-6);
@@ -118,5 +117,3 @@ export function daysWonTally(fromDate, couches) {
   }
   return { dw, cw };
 }
-
-export const LAST_DATE = COUCHES[COUCHES.length - 1].date;

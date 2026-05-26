@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { ALL_PLAYERS, LAST_DATE } from '../model.js';
-import { Avatar, fmtDate } from './shared.jsx';
+import { ALL_PLAYERS } from '../model.js';
+import { insertGame } from '../db.js';
+import { Avatar } from './shared.jsx';
 
-export default function EntryView({ onSubmit }) {
-  const [date, setDate] = useState(LAST_DATE);
+export default function EntryView({ onSubmit, reload, lastDate }) {
+  const [date, setDate] = useState(lastDate);
   const [couches, setCouches] = useState([{ players: {} }]);
-  const [picking, setPicking] = useState(0);
+  const [submitting, setSubmitting] = useState(false);
 
   function togglePlayer(ci, name) {
     setCouches(cs => cs.map((c, i) => {
@@ -23,6 +24,19 @@ export default function EntryView({ onSubmit }) {
       p[name] = Math.max(0, Math.min(66, (p[name] || 0) + delta));
       return { players: p };
     }));
+  }
+
+  async function handleSubmitClick() {
+    setSubmitting(true);
+    try {
+      await insertGame(date, couches);
+      await reload();
+      onSubmit(date, couches);
+    } catch (e) {
+      alert('Failed to save scores: ' + (e.message || e));
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   const usedPlayers = new Set(couches.flatMap(c => Object.keys(c.players)));
@@ -53,7 +67,7 @@ export default function EntryView({ onSubmit }) {
                   const takenElsewhere = usedPlayers.has(name) && !sel;
                   return <button key={name}
                     className={`pp ${sel ? 'sel' : ''}`}
-                    disabled={takenElsewhere}
+                    disabled={takenElsewhere || submitting}
                     style={takenElsewhere ? { opacity: .25 } : {}}
                     onClick={() => togglePlayer(ci, name)}>{name}</button>;
                 })}
@@ -65,9 +79,9 @@ export default function EntryView({ onSubmit }) {
                       <Avatar name={name} size={30} />
                       <div className="nm">{name}</div>
                       <div className="stepper">
-                        <button onClick={() => setScore(ci, name, -1)}>–</button>
+                        <button onClick={() => setScore(ci, name, -1)} disabled={submitting}>–</button>
                         <div className="val">{couch.players[name]}</div>
-                        <button onClick={() => setScore(ci, name, 1)}>+</button>
+                        <button onClick={() => setScore(ci, name, 1)} disabled={submitting}>+</button>
                       </div>
                     </div>))}
                   <div className={`total-chip ${couchTotals[ci] > 66 ? 'bad' : ''}`}>
@@ -80,13 +94,14 @@ export default function EntryView({ onSubmit }) {
         ))}
 
         <button className="pp" style={{ width: '100%', marginTop: 12, padding: 11 }}
+          disabled={submitting}
           onClick={() => setCouches(cs => [...cs, { players: {} }])}>
           + Add Another Couch (different city / screen)
         </button>
 
-        <button className="big-btn" disabled={anyOver || anyEmpty}
-          onClick={() => onSubmit(date, couches)}>
-          Submit Game Night
+        <button className="big-btn" disabled={anyOver || anyEmpty || submitting}
+          onClick={handleSubmitClick}>
+          {submitting ? 'Saving…' : 'Submit Game Night'}
         </button>
         <div className="hint">
           Add a separate couch for each screen being played — Dawson Creek,
